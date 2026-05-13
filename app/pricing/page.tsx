@@ -1,69 +1,99 @@
 "use client";
 
+import { useState } from "react";
 import { motion } from "framer-motion";
-import { Check, X, Crown, Sparkles } from "lucide-react";
+import { Check, X, Sparkles } from "lucide-react";
 import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
 import { useStore } from "@/lib/store";
+import { AtmosphereBg } from "@/components/AtmosphereBg";
 
 const matrix = [
   { feat: "Catalogue complet HD", free: true, premium: true },
   { feat: "Sans publicité", free: false, premium: true },
   { feat: "4K Dolby Vision + Atmos", free: false, premium: true },
   { feat: "Nombre de profils", free: "1", premium: "5 + Kids" },
-  { feat: "Appareils simultanés", free: "1", premium: "4" },
+  { feat: "Écrans simultanés", free: "1", premium: "4" },
   { feat: "Téléchargements offline", free: false, premium: true },
+  { feat: "Lives premium", free: false, premium: true },
   { feat: "Annulation à tout moment", free: true, premium: true },
 ];
 
 function Cell({ value }: { value: boolean | string }) {
-  if (typeof value === "string")
-    return <span className="text-sm font-medium">{value}</span>;
+  if (typeof value === "string") return <span className="text-sm font-medium text-white/85">{value}</span>;
   return value ? (
-    <Check className="h-5 w-5 text-vibe-400" />
+    <Check className="h-5 w-5 text-mint-300" strokeWidth={1.8} />
   ) : (
-    <X className="h-5 w-5 text-white/20" />
+    <X className="h-5 w-5 text-white/15" strokeWidth={1.8} />
   );
 }
 
 export default function PricingPage() {
-  const { isPremium, upgrade, downgrade } = useStore();
+  const { isPremium, billing, upgrade, downgrade } = useStore();
+  const [period, setPeriod] = useState<"monthly" | "yearly">(billing);
 
   return (
     <>
       <Navbar />
-      <main className="pt-32 pb-24">
-        <section className="mx-auto max-w-7xl px-6 text-center">
+      <main className="relative pb-32 pt-36 overflow-hidden">
+        <AtmosphereBg />
+
+        <section className="mx-auto max-w-[1280px] px-6 text-center">
           <span className="chip">
-            <Sparkles className="h-3 w-3 text-vibe-400" />
-            Tarification simple
+            <Sparkles className="h-3 w-3 text-mint-300" /> Tarifs honnêtes
           </span>
-          <h1 className="mt-6 font-display text-5xl md:text-7xl text-balance">
-            Choisissez votre <span className="bg-vibe-gradient bg-clip-text text-transparent">ambiance.</span>
+          <h1 className="h-display mx-auto mt-6 max-w-3xl text-balance text-5xl md:text-8xl">
+            Le streaming, à{" "}
+            <span className="italic text-mint-300/90" style={{ fontVariationSettings: "'SOFT' 80" }}>
+              prix juste.
+            </span>
           </h1>
-          <p className="mx-auto mt-5 max-w-xl text-white/65">
-            Tout le catalogue est disponible dès l'inscription. Le plan Premium retire les pubs et améliore tout le reste.
+          <p className="mx-auto mt-6 max-w-xl text-white/65">
+            1 € par mois ou 5 € pour l'année. Tout le catalogue, sans publicité.
+            Annulable en un clic depuis votre profil.
           </p>
+
+          <div className="mx-auto mt-10 inline-flex rounded-full border border-white/10 bg-white/[0.03] p-1 text-sm">
+            <button
+              onClick={() => setPeriod("monthly")}
+              className={`rounded-full px-5 py-2 transition ${
+                period === "monthly" ? "bg-white text-char-950" : "text-white/65 hover:text-white"
+              }`}
+            >
+              Mensuel
+            </button>
+            <button
+              onClick={() => setPeriod("yearly")}
+              className={`relative rounded-full px-5 py-2 transition ${
+                period === "yearly" ? "bg-white text-char-950" : "text-white/65 hover:text-white"
+              }`}
+            >
+              Annuel
+              <span className="ml-2 rounded-full bg-mint-400/20 px-1.5 py-0.5 text-[10px] font-medium text-mint-200">
+                −58 %
+              </span>
+            </button>
+          </div>
         </section>
 
         <section className="mx-auto mt-16 max-w-5xl px-6">
-          <div className="grid gap-5 md:grid-cols-2">
+          <div className="grid gap-4 md:grid-cols-2">
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.4 }}
-              className="glass rounded-3xl p-8"
+              transition={{ duration: 0.7, ease: [0.22, 0.61, 0.36, 1] }}
+              className="glass rounded-[28px] p-8"
             >
-              <div className="flex items-center justify-between">
-                <h2 className="text-xl font-semibold">Free</h2>
+              <div className="flex items-start justify-between">
+                <h2 className="text-lg font-medium">Free</h2>
                 <span className="chip">Toujours gratuit</span>
               </div>
-              <div className="mt-6 flex items-baseline gap-1">
-                <span className="text-5xl font-bold">0€</span>
-                <span className="text-white/50">/ mois</span>
+              <div className="mt-6 flex items-baseline gap-2">
+                <span className="font-display text-6xl tracking-[-0.02em]">0 €</span>
+                <span className="text-sm text-white/45">/ mois</span>
               </div>
               <p className="mt-2 text-sm text-white/55">
-                Catalogue complet avec quelques pubs courtes.
+                Tout le catalogue, avec quelques pubs courtes.
               </p>
               <button
                 onClick={downgrade}
@@ -77,54 +107,60 @@ export default function PricingPage() {
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.4, delay: 0.1 }}
-              className="relative rounded-3xl p-8 bg-gradient-to-br from-vibe-500/20 via-ink-900 to-vibe-700/20 border border-vibe-500/30"
+              transition={{ duration: 0.7, delay: 0.1, ease: [0.22, 0.61, 0.36, 1] }}
+              className="relative overflow-hidden rounded-[28px] border border-mint-400/30 bg-gradient-to-br from-mint-500/15 via-char-900 to-mint-700/15 p-8"
             >
-              <div className="absolute -top-3 right-6">
-                <span className="inline-flex items-center gap-1 rounded-full bg-vibe-gradient px-3 py-1 text-xs font-semibold">
-                  <Crown className="h-3 w-3" /> Le plus populaire
-                </span>
+              <div className="absolute -top-24 right-0 h-48 w-48 rounded-full bg-mint-500/30 blur-3xl" />
+              <div className="relative">
+                <div className="flex items-start justify-between">
+                  <h2 className="text-lg font-medium">Premium</h2>
+                  <span className="chip-mint">
+                    <Sparkles className="h-3 w-3" /> Sans pub
+                  </span>
+                </div>
+                <div className="mt-6 flex items-baseline gap-2">
+                  <span className="font-display text-6xl tracking-[-0.02em]">
+                    {period === "monthly" ? "1 €" : "5 €"}
+                  </span>
+                  <span className="text-sm text-white/45">
+                    / {period === "monthly" ? "mois" : "an"}
+                  </span>
+                </div>
+                <p className="mt-2 text-sm text-white/55">
+                  {period === "monthly"
+                    ? "Le café du dimanche, en moins cher."
+                    : "Moins de 0,42 €/mois. Vraiment."}
+                </p>
+                <button
+                  onClick={() => upgrade(period)}
+                  disabled={isPremium}
+                  className="btn-primary mt-8 w-full disabled:opacity-70"
+                >
+                  {isPremium ? "Vous êtes Premium" : "Passer Premium"}
+                </button>
+                <p className="mt-3 text-center text-xs text-white/40">
+                  Sans engagement. Annulable à tout moment.
+                </p>
               </div>
-              <div className="flex items-center justify-between">
-                <h2 className="text-xl font-semibold">Premium</h2>
-                <span className="chip">Sans pub</span>
-              </div>
-              <div className="mt-6 flex items-baseline gap-1">
-                <span className="text-5xl font-bold">8,99€</span>
-                <span className="text-white/50">/ mois</span>
-              </div>
-              <p className="mt-2 text-sm text-white/55">
-                Plus de pubs. Plus de qualité. Plus d'écrans.
-              </p>
-              <button
-                onClick={upgrade}
-                disabled={isPremium}
-                className="btn-primary mt-8 w-full disabled:opacity-60"
-              >
-                {isPremium ? "Vous êtes Premium ✨" : "Passer Premium"}
-              </button>
-              <p className="mt-3 text-center text-xs text-white/40">
-                Premier mois à 1€. Annulable à tout moment.
-              </p>
             </motion.div>
           </div>
         </section>
 
-        <section className="mx-auto mt-24 max-w-5xl px-6">
-          <h2 className="font-display text-3xl text-center">Tout comparer</h2>
-          <div className="mt-8 overflow-hidden rounded-2xl border border-white/10">
+        <section className="mx-auto mt-28 max-w-5xl px-6">
+          <h2 className="text-center font-display text-3xl">Tout, en détail</h2>
+          <div className="mt-10 overflow-hidden rounded-3xl border border-white/[0.06]">
             <table className="w-full text-left">
-              <thead className="bg-white/[0.03]">
+              <thead className="bg-white/[0.02]">
                 <tr>
-                  <th className="px-6 py-4 text-sm font-medium text-white/60">Fonctionnalité</th>
-                  <th className="px-6 py-4 text-sm font-medium text-white/60">Free</th>
-                  <th className="px-6 py-4 text-sm font-medium text-vibe-400">Premium</th>
+                  <th className="px-6 py-5 text-[11px] uppercase tracking-[0.16em] text-white/40">Fonctionnalité</th>
+                  <th className="px-6 py-5 text-[11px] uppercase tracking-[0.16em] text-white/40">Free</th>
+                  <th className="px-6 py-5 text-[11px] uppercase tracking-[0.16em] text-mint-300">Premium</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-white/5">
+              <tbody className="divide-y divide-white/[0.04]">
                 {matrix.map((row) => (
                   <tr key={row.feat}>
-                    <td className="px-6 py-4 text-sm">{row.feat}</td>
+                    <td className="px-6 py-4 text-sm text-white/85">{row.feat}</td>
                     <td className="px-6 py-4"><Cell value={row.free} /></td>
                     <td className="px-6 py-4"><Cell value={row.premium} /></td>
                   </tr>

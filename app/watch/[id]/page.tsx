@@ -25,38 +25,38 @@ export default function WatchPage({ params }: { params: Promise<{ id: string }> 
   return (
     <>
       <Navbar />
-      <main className="pt-24 pb-24">
-        <div className="mx-auto max-w-7xl px-6">
+      <main className="pt-28 pb-32">
+        <div className="mx-auto max-w-[1280px] px-6">
           <VideoPlayer title={title} />
 
-          <div className="mt-10 grid gap-10 md:grid-cols-3">
+          <div className="mt-12 grid gap-12 md:grid-cols-3">
             <div className="md:col-span-2">
-              <h1 className="font-display text-4xl md:text-5xl">{title.title}</h1>
-              <div className="mt-3 flex flex-wrap items-center gap-2 text-sm text-white/65">
+              <span className="chip">
+                {title.kind === "serie" ? "Série" : title.kind === "live" ? "Live" : "Film"}
+              </span>
+              <h1 className="h-display mt-4 text-4xl md:text-6xl">{title.title}</h1>
+              <div className="mt-4 flex flex-wrap items-center gap-2 text-[12px] uppercase tracking-[0.16em] text-white/55">
                 <span>{title.year}</span>
-                <span>•</span>
+                <span>·</span>
                 <span>{title.rating}</span>
-                <span>•</span>
+                <span>·</span>
                 <span>{formatRuntime(title.runtime)}</span>
-                <span>•</span>
-                <span>{title.genres.join(", ")}</span>
+                <span>·</span>
+                <span>{title.genres.join(" · ")}</span>
               </div>
-              <p className="mt-6 max-w-2xl text-white/80 leading-relaxed">
+              <p className="mt-7 max-w-2xl text-pretty text-[16px] leading-relaxed text-white/80">
                 {title.synopsis}
               </p>
 
-              <div className="mt-6 flex flex-wrap gap-3">
-                <button
-                  onClick={() => toggleWatch(title.id)}
-                  className="btn-ghost"
-                >
+              <div className="mt-8 flex flex-wrap gap-3">
+                <button onClick={() => toggleWatch(title.id)} className="btn-ghost">
                   {inList ? (
                     <>
                       <Check className="h-4 w-4" /> Dans ma liste
                     </>
                   ) : (
                     <>
-                      <Plus className="h-4 w-4" /> Ajouter à ma liste
+                      <Plus className="h-4 w-4" /> Ajouter
                     </>
                   )}
                 </button>
@@ -69,37 +69,32 @@ export default function WatchPage({ params }: { params: Promise<{ id: string }> 
               </div>
             </div>
 
-            <aside className="glass rounded-2xl p-6 self-start">
-              <h3 className="text-sm font-semibold text-white/80">Ambiance</h3>
-              <div className="mt-2 inline-flex rounded-full bg-vibe-gradient px-3 py-1 text-xs font-semibold">
+            <aside className="glass self-start rounded-3xl p-6">
+              <div className="text-[11px] uppercase tracking-[0.18em] text-white/40">Ambiance</div>
+              <div className="mt-2 inline-flex rounded-full bg-mint-gradient px-3 py-1 text-xs font-medium text-char-950">
                 {title.mood}
               </div>
-              <dl className="mt-6 space-y-3 text-sm">
-                <div className="flex justify-between">
-                  <dt className="text-white/50">Année</dt>
-                  <dd>{title.year}</dd>
-                </div>
-                <div className="flex justify-between">
-                  <dt className="text-white/50">Durée</dt>
-                  <dd>{formatRuntime(title.runtime)}</dd>
-                </div>
-                <div className="flex justify-between">
-                  <dt className="text-white/50">Classification</dt>
-                  <dd>{title.rating}</dd>
-                </div>
-                <div className="flex justify-between">
-                  <dt className="text-white/50">Genres</dt>
-                  <dd className="text-right">{title.genres.join(", ")}</dd>
-                </div>
+              <dl className="mt-7 space-y-3 text-sm">
+                <Row label="Année" value={String(title.year)} />
+                <Row label="Durée" value={formatRuntime(title.runtime)} />
+                <Row label="Classification" value={title.rating} />
+                <Row label="Genres" value={title.genres.join(", ")} />
               </dl>
             </aside>
           </div>
 
-          {similar.length > 0 && (
-            <MovieRow name="Dans la même veine" items={similar} />
-          )}
+          {similar.length > 0 && <MovieRow name="Dans la même veine" items={similar} />}
         </div>
       </main>
     </>
+  );
+}
+
+function Row({ label, value }: { label: string; value: string }) {
+  return (
+    <div className="flex justify-between gap-4">
+      <dt className="text-white/45">{label}</dt>
+      <dd className="text-right text-white/85">{value}</dd>
+    </div>
   );
 }

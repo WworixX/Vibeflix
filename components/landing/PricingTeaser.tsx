@@ -2,94 +2,86 @@
 
 import Link from "next/link";
 import { motion } from "framer-motion";
-import { Check, Crown } from "lucide-react";
+import { Check, Sparkles } from "lucide-react";
 
 const plans = [
   {
     name: "Free",
-    price: "0",
-    badge: "Idéal pour tester",
-    features: [
-      "Catalogue complet en HD",
-      "1 profil",
-      "Pubs courtes (max 15s)",
-      "1 appareil simultané",
-    ],
-    cta: "Commencer gratuitement",
+    price: "0 €",
+    note: "/ pour toujours",
+    desc: "Catalogue complet, quelques pubs courtes.",
+    features: ["1 profil", "Pubs max 15s", "1 écran à la fois", "HD"],
     href: "/signup",
+    cta: "Commencer",
     highlight: false,
   },
   {
     name: "Premium",
-    price: "8,99",
-    badge: "Le plus aimé",
+    price: "1 €",
+    note: "/ mois — ou 5 €/an",
+    desc: "Plus de pub. Plus de qualité. Plus d'écrans.",
     features: [
-      "Tout du plan Free, sans pub",
+      "Sans publicité",
       "4K Dolby Vision + Atmos",
       "5 profils + Kids",
-      "4 appareils simultanés",
-      "Téléchargements offline",
+      "4 écrans simultanés",
+      "Téléchargements illimités",
     ],
-    cta: "Passer Premium",
     href: "/pricing",
+    cta: "Passer Premium",
     highlight: true,
   },
 ];
 
 export function PricingTeaser() {
   return (
-    <section className="mx-auto max-w-7xl px-6 py-24">
-      <div className="text-center max-w-2xl mx-auto">
-        <span className="chip">Tarifs simples</span>
-        <h2 className="mt-4 font-display text-4xl md:text-5xl">
-          Gratuit. Ou Premium. <br /> Rien entre les deux.
+    <section className="mx-auto max-w-[1280px] px-6 py-28">
+      <div className="mx-auto max-w-2xl text-center">
+        <span className="chip">Tarifs</span>
+        <h2 className="h-display mt-4 text-balance text-4xl md:text-6xl">
+          Gratuit. Ou Premium.{" "}
+          <span className="italic text-mint-300/90" style={{ fontVariationSettings: "'SOFT' 80" }}>
+            Rien entre.
+          </span>
         </h2>
       </div>
 
-      <div className="mt-14 grid gap-5 md:grid-cols-2 max-w-4xl mx-auto">
+      <div className="mx-auto mt-16 grid max-w-4xl gap-4 md:grid-cols-2">
         {plans.map((p, i) => (
           <motion.div
             key={p.name}
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
-            transition={{ duration: 0.5, delay: i * 0.1 }}
-            className={`relative rounded-3xl p-8 ${
+            transition={{ duration: 0.7, delay: i * 0.08, ease: [0.22, 0.61, 0.36, 1] }}
+            className={`relative overflow-hidden rounded-[28px] p-8 ${
               p.highlight
-                ? "bg-gradient-to-br from-vibe-500/20 via-ink-900 to-vibe-700/20 border border-vibe-500/30"
+                ? "border border-mint-400/30 bg-gradient-to-br from-mint-500/10 via-char-900 to-mint-700/10"
                 : "glass"
             }`}
           >
             {p.highlight && (
-              <div className="absolute -top-3 right-6">
-                <span className="inline-flex items-center gap-1 rounded-full bg-vibe-gradient px-3 py-1 text-xs font-semibold">
-                  <Crown className="h-3 w-3" /> {p.badge}
-                </span>
-              </div>
+              <span className="absolute right-6 top-6 chip-mint">
+                <Sparkles className="h-3 w-3" /> Le plus aimé
+              </span>
             )}
-            <div className="flex items-baseline justify-between">
-              <h3 className="text-xl font-semibold">{p.name}</h3>
-              {!p.highlight && (
-                <span className="text-xs text-white/50">{p.badge}</span>
-              )}
+            <h3 className="text-lg font-medium">{p.name}</h3>
+            <div className="mt-6 flex items-baseline gap-2">
+              <span className="font-display text-6xl tracking-[-0.02em]">{p.price}</span>
+              <span className="text-sm text-white/50">{p.note}</span>
             </div>
-            <div className="mt-6 flex items-baseline gap-1">
-              <span className="text-5xl font-bold">{p.price}€</span>
-              <span className="text-sm text-white/50">/ mois</span>
-            </div>
-            <ul className="mt-6 space-y-3 text-sm">
+            <p className="mt-2 text-sm text-white/55">{p.desc}</p>
+            <ul className="mt-7 space-y-2.5 text-sm">
               {p.features.map((f) => (
                 <li key={f} className="flex items-start gap-2.5">
-                  <Check className="mt-0.5 h-4 w-4 shrink-0 text-vibe-400" />
+                  <Check className="mt-0.5 h-4 w-4 shrink-0 text-mint-300" strokeWidth={1.8} />
                   <span className="text-white/80">{f}</span>
                 </li>
               ))}
             </ul>
             <Link
               href={p.href}
-              className={`mt-8 block text-center ${
-                p.highlight ? "btn-primary w-full" : "btn-ghost w-full"
-              }`}
+              className={`mt-9 block w-full text-center ${p.highlight ? "btn-primary" : "btn-ghost"}`}
             >
               {p.cta}
             </Link>

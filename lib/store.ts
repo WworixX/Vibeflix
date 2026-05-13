@@ -13,12 +13,13 @@ type State = {
   isAuthed: boolean;
   email: string | null;
   isPremium: boolean;
+  billing: "monthly" | "yearly";
   profileId: string | null;
   profiles: Profile[];
   watchlist: string[];
   signIn: (email: string) => void;
   signOut: () => void;
-  upgrade: () => void;
+  upgrade: (billing?: "monthly" | "yearly") => void;
   downgrade: () => void;
   selectProfile: (id: string) => void;
   addProfile: (p: Omit<Profile, "id">) => void;
@@ -26,9 +27,9 @@ type State = {
 };
 
 const defaultProfiles: Profile[] = [
-  { id: "p1", name: "Noah", color: "from-vibe-500 to-vibe-700" },
-  { id: "p2", name: "Lina", color: "from-amber-400 to-rose-500" },
-  { id: "p3", name: "Kids", color: "from-emerald-400 to-cyan-500", kids: true },
+  { id: "p1", name: "Noah", color: "from-mint-400 via-mint-500 to-mint-700" },
+  { id: "p2", name: "Lina", color: "from-amber-200 via-rose-400 to-fuchsia-500" },
+  { id: "p3", name: "Kids", color: "from-cyan-300 via-emerald-400 to-mint-500", kids: true },
 ];
 
 export const useStore = create<State>()(
@@ -37,22 +38,18 @@ export const useStore = create<State>()(
       isAuthed: false,
       email: null,
       isPremium: false,
+      billing: "monthly",
       profileId: null,
       profiles: defaultProfiles,
       watchlist: [],
       signIn: (email) => set({ isAuthed: true, email }),
       signOut: () =>
         set({ isAuthed: false, email: null, profileId: null, isPremium: false }),
-      upgrade: () => set({ isPremium: true }),
+      upgrade: (billing = "monthly") => set({ isPremium: true, billing }),
       downgrade: () => set({ isPremium: false }),
       selectProfile: (id) => set({ profileId: id }),
       addProfile: (p) =>
-        set({
-          profiles: [
-            ...get().profiles,
-            { ...p, id: `p${Date.now()}` },
-          ],
-        }),
+        set({ profiles: [...get().profiles, { ...p, id: `p${Date.now()}` }] }),
       toggleWatch: (titleId) =>
         set({
           watchlist: get().watchlist.includes(titleId)
@@ -60,6 +57,6 @@ export const useStore = create<State>()(
             : [...get().watchlist, titleId],
         }),
     }),
-    { name: "vibeflix-store" }
+    { name: "vibeflix-store-v2" }
   )
 );

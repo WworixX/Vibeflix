@@ -1,19 +1,26 @@
 import type { Metadata } from "next";
-import { Inter, Instrument_Serif } from "next/font/google";
+import { Fraunces, Geist } from "next/font/google";
 import "./globals.css";
 
-const inter = Inter({ subsets: ["latin"], variable: "--font-sans" });
-const serif = Instrument_Serif({
+const geist = Geist({
   subsets: ["latin"],
-  weight: "400",
-  variable: "--font-serif",
+  variable: "--font-geist",
+  display: "swap",
+});
+
+const fraunces = Fraunces({
+  subsets: ["latin"],
+  variable: "--font-fraunces",
+  display: "swap",
+  axes: ["opsz", "SOFT"],
 });
 
 export const metadata: Metadata = {
-  title: "VibeFlix — Le cinéma a une nouvelle ambiance",
+  title: "VibeFlix — Le streaming, en plus beau.",
   description:
-    "Streaming films & séries en illimité. Gratuit avec quelques pubs, ou Premium sans aucune interruption.",
+    "Films, séries et live. Une expérience pensée pour celles et ceux qui regardent vraiment. Gratuit avec pub, ou Premium à 1€/mois.",
   metadataBase: new URL("https://vibeflix.local"),
+  themeColor: "#0B1411",
 };
 
 export default function RootLayout({
@@ -22,8 +29,10 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="fr" className={`${inter.variable} ${serif.variable}`}>
-      <body className="min-h-screen antialiased font-sans">{children}</body>
+    <html lang="fr" className={`${geist.variable} ${fraunces.variable}`}>
+      <body className="relative min-h-screen font-sans antialiased">
+        <div className="relative z-[2]">{children}</div>
+      </body>
     </html>
   );
 }

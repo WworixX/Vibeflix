@@ -1,17 +1,21 @@
 import { cn } from "@/lib/utils";
 
-export function LogoMark({ className }: { className?: string }) {
+export function LogoMark({ className, compact = false }: { className?: string; compact?: boolean }) {
   return (
-    <div className={cn("flex items-center gap-2", className)}>
-      <div className="relative h-7 w-7">
-        <div className="absolute inset-0 rounded-md bg-vibe-gradient blur-md opacity-70" />
-        <div className="relative h-7 w-7 rounded-md bg-vibe-gradient grid place-items-center font-black text-white">
-          V
-        </div>
-      </div>
-      <span className="text-lg font-bold tracking-tight">
-        Vibe<span className="text-vibe-500">Flix</span>
+    <div className={cn("flex items-center gap-2.5", className)}>
+      <span className="relative inline-flex h-7 w-7 items-center justify-center">
+        <span className="absolute inset-0 rounded-[10px] bg-mint-gradient blur-md opacity-60" />
+        <span className="relative inline-flex h-7 w-7 items-center justify-center rounded-[10px] bg-mint-gradient">
+          <svg viewBox="0 0 24 24" className="h-3.5 w-3.5 text-char-950" fill="currentColor">
+            <path d="M8 5v14l11-7z" />
+          </svg>
+        </span>
       </span>
+      {!compact && (
+        <span className="font-display text-[19px] tracking-[-0.02em] text-white">
+          vibeflix<span className="text-mint-400">.</span>
+        </span>
+      )}
     </div>
   );
 }

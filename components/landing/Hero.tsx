@@ -2,102 +2,86 @@
 
 import Link from "next/link";
 import { motion } from "framer-motion";
-import { Play, Sparkles } from "lucide-react";
+import { Play, ArrowRight } from "lucide-react";
+import { titles } from "@/lib/mock-data";
+import { AtmosphereBg } from "../AtmosphereBg";
 
 export function Hero() {
+  const featured = titles.find((t) => t.featured) ?? titles[0];
+
   return (
-    <section className="relative isolate overflow-hidden pt-32 pb-24">
-      <div className="absolute inset-0 -z-10 bg-radial-fade" />
-      <div className="absolute inset-0 -z-10 grid-bg opacity-30" />
-      <div className="absolute top-1/2 left-1/2 -z-10 h-[600px] w-[900px] -translate-x-1/2 -translate-y-1/2 rounded-full bg-vibe-gradient opacity-20 blur-[120px]" />
+    <section className="relative isolate overflow-hidden pt-36 pb-20 md:pt-44 md:pb-32">
+      <AtmosphereBg />
 
-      <div className="mx-auto max-w-7xl px-6 text-center">
+      <div className="mx-auto max-w-[1280px] px-6">
         <motion.div
-          initial={{ opacity: 0, y: 10 }}
+          initial={{ opacity: 0, y: 8 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5 }}
-          className="inline-flex"
+          transition={{ duration: 0.8, ease: [0.22, 0.61, 0.36, 1] }}
+          className="mx-auto max-w-3xl text-center"
         >
-          <span className="chip">
-            <Sparkles className="h-3 w-3 text-vibe-400" />
-            Nouvelle saison 2026 disponible
+          <span className="chip-mint">
+            <span className="relative grid h-1.5 w-1.5 place-items-center">
+              <span className="absolute inset-0 animate-ping rounded-full bg-mint-400/60" />
+              <span className="relative h-1.5 w-1.5 rounded-full bg-mint-400" />
+            </span>
+            Saison 2026 — nouvelle vague
           </span>
-        </motion.div>
-
-        <motion.h1
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.7, delay: 0.05 }}
-          className="mt-6 font-display text-balance text-5xl leading-[1.05] tracking-tight md:text-7xl lg:text-[88px]"
-        >
-          Le cinéma a une <br />
-          <span className="bg-vibe-gradient bg-clip-text text-transparent">
-            nouvelle ambiance.
-          </span>
-        </motion.h1>
-
-        <motion.p
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.7, delay: 0.15 }}
-          className="mx-auto mt-6 max-w-2xl text-balance text-base text-white/70 md:text-lg"
-        >
-          Des milliers de films et séries, curatés par humeurs. Gratuit avec
-          quelques pubs — ou Premium, pour le silence complet.
-        </motion.p>
-
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.7, delay: 0.25 }}
-          className="mt-10 flex flex-col items-center justify-center gap-3 sm:flex-row"
-        >
-          <Link href="/signup" className="btn-primary">
-            <Play className="h-4 w-4 fill-current" />
-            Regarder gratuitement
-          </Link>
-          <Link href="/pricing" className="btn-ghost">
-            Voir Premium
-          </Link>
-        </motion.div>
-
-        <motion.p
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ duration: 0.7, delay: 0.4 }}
-          className="mt-6 text-xs text-white/40"
-        >
-          Aucune carte bancaire requise. Sans engagement.
-        </motion.p>
-
-        <motion.div
-          initial={{ opacity: 0, y: 40 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8, delay: 0.35 }}
-          className="relative mt-20"
-        >
-          <div className="relative mx-auto max-w-5xl">
-            <div className="absolute -inset-x-10 -inset-y-6 -z-10 bg-vibe-gradient opacity-30 blur-3xl" />
-            <div className="overflow-hidden rounded-2xl border border-white/10 shadow-[0_30px_80px_-20px_rgba(0,0,0,0.6)]">
-              <img
-                src="https://images.unsplash.com/photo-1542204165-65bf26472b9b?auto=format&fit=crop&w=1800&q=80"
-                alt="VibeFlix preview"
-                className="aspect-[16/9] w-full object-cover"
-              />
-              <div className="absolute inset-0 bg-gradient-to-t from-ink-950 via-transparent to-transparent" />
-              <div className="absolute bottom-6 left-6 right-6 flex flex-wrap items-end justify-between gap-4">
-                <div>
-                  <div className="text-xs text-white/60">À l'affiche</div>
-                  <div className="font-display text-3xl">Neon Horizon</div>
-                </div>
-                <div className="flex gap-2">
-                  <span className="chip">Sci-Fi</span>
-                  <span className="chip">Thriller</span>
-                  <span className="chip">2025</span>
-                </div>
-              </div>
-            </div>
+          <h1 className="h-display mt-7 text-balance text-[56px] md:text-[88px] lg:text-[112px]">
+            Le streaming,
+            <br />
+            <span className="italic text-mint-300" style={{ fontVariationSettings: "'SOFT' 80" }}>
+              en plus beau.
+            </span>
+          </h1>
+          <p className="mx-auto mt-7 max-w-xl text-pretty text-[17px] leading-relaxed text-white/65">
+            Films, séries et lives — curatés avec goût. Gratuit avec quelques pubs
+            courtes, ou Premium à 1 € par mois pour le silence complet.
+          </p>
+          <div className="mt-10 flex flex-col items-center justify-center gap-3 sm:flex-row">
+            <Link href="/signup" className="btn-primary">
+              <Play className="h-4 w-4 fill-current" />
+              Commencer gratuitement
+            </Link>
+            <Link href="/pricing" className="btn-ghost group">
+              Voir Premium
+              <ArrowRight className="h-4 w-4 transition-transform duration-500 ease-exhale group-hover:translate-x-0.5" />
+            </Link>
           </div>
+          <p className="mt-5 text-xs text-white/40">Aucune carte requise.</p>
+        </motion.div>
+
+        <motion.div
+          initial={{ opacity: 0, y: 30 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 1, delay: 0.2, ease: [0.22, 0.61, 0.36, 1] }}
+          className="relative mx-auto mt-24 max-w-5xl"
+        >
+          <div className="absolute -inset-12 -z-10 rounded-[40px] bg-mint-soft blur-2xl" />
+          <Link
+            href={`/watch/${featured.id}`}
+            className="group relative block overflow-hidden rounded-[28px] border border-white/8 shadow-[0_50px_120px_-30px_rgba(0,0,0,0.7)]"
+          >
+            <img
+              src={featured.backdrop}
+              alt={featured.title}
+              className="aspect-[16/9] w-full object-cover transition-transform duration-1000 ease-exhale group-hover:scale-[1.03]"
+            />
+            <div className="absolute inset-0 bg-gradient-to-t from-char-950 via-char-950/30 to-transparent" />
+            <div className="absolute inset-0 bg-gradient-to-r from-char-950/60 via-transparent to-transparent" />
+
+            <div className="absolute bottom-7 left-7 right-7 flex flex-wrap items-end justify-between gap-5">
+              <div className="max-w-md">
+                <span className="chip-mint">À l'affiche</span>
+                <h3 className="h-display mt-3 text-3xl md:text-5xl">{featured.title}</h3>
+                <p className="mt-2 text-sm text-white/70 line-clamp-2">{featured.synopsis}</p>
+              </div>
+              <span className="inline-flex items-center gap-2 rounded-full bg-white/10 backdrop-blur px-4 py-2 text-xs text-white/85 transition group-hover:bg-white/15">
+                <Play className="h-3.5 w-3.5 fill-current" />
+                Lecture
+              </span>
+            </div>
+          </Link>
         </motion.div>
       </div>
     </section>

@@ -5,46 +5,87 @@
 @layer base {
   :root {
     color-scheme: dark;
+    --grain: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='160' height='160'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 0.05 0 0 0 0 0.07 0 0 0 0 0.06 0 0 0 0.08 0'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>");
   }
   html, body {
-    background: #07070A;
-    color: #F5F5FA;
-    font-feature-settings: "ss01", "cv11";
+    background: #0B1411;
+    color: #ECF6F1;
+    font-feature-settings: "ss01", "ss02", "cv11";
+    text-rendering: optimizeLegibility;
+    -webkit-font-smoothing: antialiased;
   }
-  ::selection {
-    background: #E11D74;
-    color: #fff;
+  body::before {
+    content: "";
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    background-image: var(--grain);
+    opacity: 0.35;
+    mix-blend-mode: overlay;
+    z-index: 1;
   }
+  ::selection { background: #3FCB89; color: #07100D; }
+  * { -webkit-tap-highlight-color: transparent; }
 }
 
 @layer utilities {
   .text-balance { text-wrap: balance; }
+  .text-pretty { text-wrap: pretty; }
   .glass {
-    background: rgba(20, 20, 30, 0.55);
-    backdrop-filter: blur(16px);
-    -webkit-backdrop-filter: blur(16px);
-    border: 1px solid rgba(255, 255, 255, 0.06);
+    background: linear-gradient(180deg, rgba(255,255,255,0.04) 0%, rgba(255,255,255,0.015) 100%);
+    backdrop-filter: blur(18px) saturate(140%);
+    -webkit-backdrop-filter: blur(18px) saturate(140%);
+    border: 1px solid rgba(255,255,255,0.06);
+  }
+  .glass-strong {
+    background: rgba(14,24,21,0.7);
+    backdrop-filter: blur(22px) saturate(140%);
+    -webkit-backdrop-filter: blur(22px) saturate(140%);
+    border: 1px solid rgba(255,255,255,0.08);
   }
   .scrollbar-hide::-webkit-scrollbar { display: none; }
   .scrollbar-hide { -ms-overflow-style: none; scrollbar-width: none; }
   .mask-fade-r {
-    -webkit-mask-image: linear-gradient(to right, black 85%, transparent);
-    mask-image: linear-gradient(to right, black 85%, transparent);
+    -webkit-mask-image: linear-gradient(to right, black 88%, transparent);
+    mask-image: linear-gradient(to right, black 88%, transparent);
   }
-  .grid-bg {
-    background-image:
-      linear-gradient(rgba(255,255,255,0.04) 1px, transparent 1px),
-      linear-gradient(90deg, rgba(255,255,255,0.04) 1px, transparent 1px);
-    background-size: 48px 48px;
+  .ring-glow {
+    box-shadow: 0 0 0 1px rgba(63,203,137,0.35), 0 20px 60px -20px rgba(34,185,122,0.45);
+  }
+  .shimmer {
+    background: linear-gradient(110deg, rgba(255,255,255,0.04) 30%, rgba(255,255,255,0.10) 50%, rgba(255,255,255,0.04) 70%);
+    background-size: 200% 100%;
+    animation: shimmer 2.4s linear infinite;
   }
 }
 
-.btn-primary {
-  @apply inline-flex items-center justify-center gap-2 rounded-full bg-vibe-gradient px-6 py-3 text-sm font-semibold text-white shadow-[0_10px_40px_-10px_rgba(225,29,116,0.7)] transition hover:scale-[1.02] hover:shadow-[0_15px_50px_-10px_rgba(225,29,116,0.9)] active:scale-[0.98];
-}
-.btn-ghost {
-  @apply inline-flex items-center justify-center gap-2 rounded-full border border-white/10 bg-white/5 px-6 py-3 text-sm font-semibold text-white/90 transition hover:bg-white/10;
-}
-.chip {
-  @apply inline-flex items-center gap-1.5 rounded-full border border-white/10 bg-white/[0.04] px-3 py-1 text-xs font-medium text-white/70;
+@layer components {
+  .btn-primary {
+    @apply relative inline-flex items-center justify-center gap-2 rounded-full bg-mint-gradient px-6 py-3 text-sm font-medium text-char-950 transition-all duration-500 ease-exhale hover:translate-y-[-1px];
+    box-shadow:
+      0 1px 0 rgba(255,255,255,0.25) inset,
+      0 12px 30px -10px rgba(34,185,122,0.55),
+      0 0 0 1px rgba(63,203,137,0.35);
+  }
+  .btn-primary:hover {
+    box-shadow:
+      0 1px 0 rgba(255,255,255,0.35) inset,
+      0 18px 50px -10px rgba(34,185,122,0.85),
+      0 0 0 1px rgba(111,220,166,0.6);
+  }
+  .btn-ghost {
+    @apply inline-flex items-center justify-center gap-2 rounded-full border border-white/10 bg-white/[0.03] px-6 py-3 text-sm font-medium text-white/85 transition-all duration-500 ease-exhale hover:border-white/20 hover:bg-white/[0.07];
+  }
+  .chip {
+    @apply inline-flex items-center gap-1.5 rounded-full border border-white/10 bg-white/[0.03] px-3 py-1 text-[11px] font-medium uppercase tracking-[0.14em] text-white/70;
+  }
+  .chip-mint {
+    @apply inline-flex items-center gap-1.5 rounded-full border border-mint-400/30 bg-mint-400/10 px-3 py-1 text-[11px] font-medium uppercase tracking-[0.14em] text-mint-200;
+  }
+  .input-row {
+    @apply flex items-center gap-3 rounded-2xl border border-white/10 bg-white/[0.03] px-4 py-3.5 transition focus-within:border-mint-400/40 focus-within:bg-white/[0.05];
+  }
+  .h-display {
+    @apply font-display font-medium tracking-[-0.02em] leading-[0.95];
+  }
 }

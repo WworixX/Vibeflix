@@ -1,64 +1,61 @@
 # VibeFlix — Contexte du projet
 
 ## Vision
-VibeFlix est une plateforme de streaming films/séries au positionnement freemium :
-- **Free** : accès complet au catalogue avec publicités intégrées au player.
-- **Premium** : suppression totale des publicités + qualité supérieure (positionnement marketing).
+Plateforme de streaming films, séries et live, positionnée comme **l'alternative éditoriale et soignée** au streaming corporate. Public cible : 16–28 ans, sensibles au design, qui détectent un template générique en trois secondes. Le produit doit donner envie de s'inscrire **avant** d'avoir compris ce qu'il fait.
 
-Le produit doit dégager une sensation premium et cinématographique, dans la lignée de Netflix, Apple TV+ et MUBI, tout en assumant un côté "vibes" et découverte (curation par humeurs/ambiances).
+## Modèle économique
+- **Free** : tout le catalogue, avec quelques pubs courtes (15s max, skippable à 5s).
+- **Premium** : 1 €/mois ou 5 €/an. Plus de pub, 4K Dolby Vision + Atmos, 5 profils, 4 écrans simultanés, téléchargements illimités.
 
-## Cible
-- Spectateurs 18–45 ans, habitués des plateformes de SVOD.
-- Sensibles au design et à la qualité éditoriale.
-- Mix entre utilisateurs gratuits (tolèrent les pubs) et payants (cherchent l'expérience pure).
+## Direction artistique
+- **Palette** : mint/emerald sur charcoal profond. Pas de noir pur, pas de néon — un vert légèrement frais (`#3FCB89` → `#0F6E4D`) sur un fond `#0B1411`.
+- **Typo** : Fraunces (display, axe `SOFT` activé pour l'italique organique) + Geist (UI).
+- **Coins** : doux partout (`rounded-2xl`, `rounded-3xl`, `rounded-[28px]`).
+- **Gradients** : mesh atmosphériques façon Linear/Stripe, jamais agressifs.
+- **Motion** : "exhales, not bounces". Easing `cubic-bezier(0.22, 0.61, 0.36, 1)`, durées longues (500–1000ms), pas de spring juvénile.
+- **Espacement** : générosité éditoriale. Préférer six éléments respirants à trente entassés.
+- **Grain** : léger overlay SVG noise pour profondeur cinéma.
 
-## Objectif de conversion
-1. Inscription gratuite (faible friction, accès rapide au catalogue).
-2. Upsell vers Premium depuis :
-   - L'overlay de pub dans le player ("Supprimer les pubs").
-   - La page `/pricing`.
-   - Des CTAs contextuels dans la navbar et après onboarding.
+## Stack
+- **Next.js 15** (App Router, RSC) + **TypeScript**
+- **Tailwind CSS** v3 (config étendue : palette `char/mint`, easing `exhale`, keyframes `drift/breathe`)
+- **Framer Motion** pour les transitions
+- **Zustand** + `persist` (`vibeflix-store-v2`) — auth mock, profils, watchlist, statut Premium
+- **Lucide React** pour les icônes
+- Polices via `next/font/google` (Fraunces axes `opsz` + `SOFT`, Geist)
 
-## Stack technique
-- **Framework** : Next.js 15 (App Router, RSC) + TypeScript
-- **Style** : Tailwind CSS v4 (config inline via `@theme`)
-- **Animations** : Framer Motion
-- **Icônes** : Lucide React
-- **State client** : Zustand (profil sélectionné, watchlist, statut Premium) avec persistance `localStorage`
-- **Auth** : UI mockée (aucun backend), simulation côté client
-
-## Structure des routes
+## Routes
 | Route | Description |
 |-------|-------------|
-| `/` | Landing marketing (hero, features, testimonials, pricing teaser, CTA) |
-| `/login`, `/signup` | Pages d'authentification mockées |
-| `/profiles` | Sélection de profil (style Netflix) |
-| `/browse` | Catalogue principal avec carrousels par catégorie |
-| `/watch/[id]` | Lecteur vidéo avec simulation de publicité skippable |
-| `/pricing` | Comparatif Free vs Premium |
-| `/my-list` | Watchlist de l'utilisateur |
+| `/` | Landing éditoriale (Hero magazine, Features, Showcase, PricingTeaser, Testimonials, FAQ, CTA) |
+| `/login`, `/signup` | Auth mockée |
+| `/profiles` | Sélection de profil avec gradients colorés |
+| `/browse` | Hero cinéma + carrousels par humeur et par genre |
+| `/live` | Diffusions en direct |
+| `/watch/[id]` | Lecteur MP4 réel + simulation de pub + détails |
+| `/pricing` | Toggle mensuel/annuel, comparatif Free vs Premium |
+| `/my-list` | Watchlist |
 
-## Données / contenus
-- **v1** : données 100% mockées dans `lib/mock-data.ts` avec posters via Unsplash/placeholders.
-- **À venir** : intégration d'un flux vidéo externe (à brancher plus tard sur `/watch/[id]`).
+## Données
+- Films/séries **réels** (TMDB) : Dune Part Two, Stranger Things, The Last of Us, Mercredi, Oppenheimer, Interstellar, House of the Dragon, Breaking Bad, The Bear, Everything Everywhere, Succession, The Batman, Spider-Verse, Barbie, Arcane, Anatomie d'une chute.
+- Posters & backdrops servis via `image.tmdb.org`.
+- Vidéo échantillon : Big Buck Bunny (Google CDN).
 
-## Design system
-- Palette : noir profond (#0A0A0B), accent magenta/violet (`#E11D74` → `#7C3AED`), texte off-white.
-- Typo : Inter (UI) + une display serif optionnelle pour les titres marketing.
-- Animations : entrées subtiles, hover states sur les cards, transitions de page douces.
-
-## À faire / modifications futures
-- [ ] Brancher la source vidéo réelle (flux externe) sur le composant `VideoPlayer`.
-- [ ] Connecter une vraie auth (NextAuth / Clerk / Supabase) — actuellement mockée.
-- [ ] Backend pour persister profils + watchlist côté serveur (actuellement `localStorage`).
-- [ ] Intégrer un vrai système de paiement (Stripe) pour l'abonnement Premium.
-- [ ] Recommandations personnalisées (algorithme ou API tierce).
-- [ ] CMS pour gérer le catalogue (Sanity, Payload, ou base custom).
-- [ ] SEO : métadonnées par film, sitemap dynamique, OG images générées.
+## À faire
+- [ ] Brancher la source vidéo réelle sur `components/VideoPlayer.tsx` (remplacer `SAMPLE_VIDEO_URL`).
+- [ ] Auth réelle (NextAuth / Clerk / Supabase).
+- [ ] Backend pour persister profils, watchlist et progression.
+- [ ] Paiement Stripe (1 €/mois et 5 €/an).
+- [ ] Recherche globale (cmd+K) avec filtres genres/humeurs.
+- [ ] Recommandations personnalisées par profil.
+- [ ] CMS éditorial pour la curation par humeurs.
 - [ ] Tests E2E (Playwright) sur les parcours clés.
+- [ ] Sitemap dynamique + OG images générées par titre.
 
 ## Conventions
 - Composants en PascalCase dans `components/`.
-- Données mockées centralisées dans `lib/mock-data.ts`.
-- État global dans `lib/store.ts` (Zustand).
-- Pas de commentaires superflus dans le code (le code doit s'auto-documenter).
+- Données mockées dans `lib/mock-data.ts`.
+- État global dans `lib/store.ts`.
+- Classes utilitaires custom dans `globals.css` (`btn-primary`, `chip`, `glass`, `h-display`).
+- Pas de commentaires superflus.
+- Toute UI textuelle en français.

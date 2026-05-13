@@ -5,46 +5,67 @@ const config: Config = {
   theme: {
     extend: {
       colors: {
-        ink: {
-          950: "#07070A",
-          900: "#0A0A0F",
-          800: "#111118",
-          700: "#1A1A24",
-          600: "#262633",
-          500: "#3A3A4A",
+        char: {
+          950: "#07100D",
+          900: "#0B1411",
+          850: "#0E1815",
+          800: "#121E1A",
+          700: "#1A2924",
+          600: "#243630",
+          500: "#34504A",
+          400: "#4B6E66",
         },
-        vibe: {
-          50: "#FDE7F2",
-          200: "#FAB1D4",
-          400: "#F25CA2",
-          500: "#E11D74",
-          600: "#B91560",
-          700: "#7C3AED",
-          800: "#5B21B6",
+        mint: {
+          50: "#E6FBF2",
+          100: "#C6F5DF",
+          200: "#9EEAC4",
+          300: "#6FDCA6",
+          400: "#3FCB89",
+          500: "#22B97A",
+          600: "#179565",
+          700: "#0F6E4D",
+          800: "#0B5039",
+          900: "#08382A",
         },
       },
       fontFamily: {
-        sans: ["Inter", "ui-sans-serif", "system-ui", "sans-serif"],
-        display: ["'Instrument Serif'", "Georgia", "serif"],
+        sans: ["var(--font-geist)", "ui-sans-serif", "system-ui", "sans-serif"],
+        display: ["var(--font-fraunces)", "Georgia", "serif"],
       },
       backgroundImage: {
-        "vibe-gradient": "linear-gradient(135deg, #E11D74 0%, #7C3AED 100%)",
-        "radial-fade":
-          "radial-gradient(ellipse at top, rgba(124,58,237,0.25), transparent 60%)",
+        "mint-gradient":
+          "linear-gradient(135deg, #6FDCA6 0%, #22B97A 55%, #0F6E4D 100%)",
+        "mint-soft":
+          "linear-gradient(135deg, rgba(63,203,137,0.30) 0%, rgba(17,149,101,0.10) 60%, transparent 100%)",
+        mesh: `radial-gradient(at 18% 12%, rgba(63,203,137,0.18) 0px, transparent 55%),
+               radial-gradient(at 82% 8%, rgba(17,149,101,0.20) 0px, transparent 50%),
+               radial-gradient(at 50% 95%, rgba(34,185,122,0.12) 0px, transparent 55%)`,
+      },
+      borderRadius: {
+        xl2: "1.25rem",
+        "4xl": "2rem",
+      },
+      transitionTimingFunction: {
+        exhale: "cubic-bezier(0.22, 0.61, 0.36, 1)",
       },
       keyframes: {
         shimmer: {
           "0%": { backgroundPosition: "-200% 0" },
           "100%": { backgroundPosition: "200% 0" },
         },
-        floaty: {
-          "0%,100%": { transform: "translateY(0)" },
-          "50%": { transform: "translateY(-8px)" },
+        drift: {
+          "0%,100%": { transform: "translate3d(0,0,0) scale(1)" },
+          "50%": { transform: "translate3d(2%, -2%, 0) scale(1.04)" },
+        },
+        breathe: {
+          "0%,100%": { opacity: "0.35" },
+          "50%": { opacity: "0.55" },
         },
       },
       animation: {
-        shimmer: "shimmer 2.5s linear infinite",
-        floaty: "floaty 6s ease-in-out infinite",
+        shimmer: "shimmer 2.4s linear infinite",
+        drift: "drift 18s ease-in-out infinite",
+        breathe: "breathe 7s ease-in-out infinite",
       },
     },
   },

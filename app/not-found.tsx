@@ -1,16 +1,24 @@
 import Link from "next/link";
 import { LogoMark } from "@/components/LogoMark";
+import { AtmosphereBg } from "@/components/AtmosphereBg";
 
 export default function NotFound() {
   return (
-    <main className="grid min-h-screen place-items-center px-6">
+    <main className="relative grid min-h-screen place-items-center overflow-hidden px-6">
+      <AtmosphereBg />
       <div className="text-center">
         <LogoMark className="mx-auto justify-center" />
-        <h1 className="mt-8 font-display text-6xl md:text-8xl">404</h1>
-        <p className="mt-4 max-w-md text-white/60">
-          Cette ambiance n'existe pas. Le film que vous cherchez a peut-être quitté le catalogue.
+        <h1 className="h-display mt-10 text-7xl md:text-9xl">
+          4
+          <span className="italic text-mint-300/90" style={{ fontVariationSettings: "'SOFT' 80" }}>
+            0
+          </span>
+          4
+        </h1>
+        <p className="mx-auto mt-5 max-w-md text-white/55">
+          Cette ambiance n'existe pas. Le titre que vous cherchez a peut-être quitté le catalogue.
         </p>
-        <Link href="/" className="btn-primary mt-8 inline-flex">
+        <Link href="/" className="btn-primary mt-9 inline-flex">
           Retour à l'accueil
         </Link>
       </div>

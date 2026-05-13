@@ -1,17 +1,17 @@
 # VibeFlix
 
-Plateforme de streaming films/séries — freemium (gratuit avec pubs, Premium sans pub).
+Plateforme de streaming films, séries et live — pensée comme l'alternative éditoriale au streaming corporate. Mint sur charcoal, typo Fraunces, motion en "exhales".
 
-> **Important :** lire [`CONTEXT.md`](./CONTEXT.md) pour le contexte produit complet, les conventions et la roadmap.
+> Le contexte produit complet, la direction artistique, et la roadmap sont dans [`CONTEXT.md`](./CONTEXT.md).
 
 ## Stack
 
-- **Next.js 15** (App Router, RSC) + **TypeScript**
-- **Tailwind CSS** 3 (config étendue avec design system VibeFlix)
-- **Framer Motion** pour les animations
-- **Zustand** + `persist` pour l'état client (auth mock, profils, watchlist, statut Premium)
+- **Next.js 15** (App Router) + **TypeScript**
+- **Tailwind CSS** v3 (design system étendu — palette `char/mint`, easing `exhale`)
+- **Framer Motion** pour les transitions
+- **Zustand** + persist (auth mock, profils, watchlist, statut Premium)
 - **Lucide React** pour les icônes
-- Police : Inter (UI) + Instrument Serif (titres display)
+- Polices : **Fraunces** (display) + **Geist** (UI)
 
 ## Installation
 
@@ -20,73 +20,60 @@ npm install
 npm run dev
 ```
 
-Ouvrir [http://localhost:3000](http://localhost:3000).
+→ [http://localhost:3000](http://localhost:3000)
 
 ## Scripts
 
 | Commande | Description |
 |----------|-------------|
-| `npm run dev` | Démarrage du serveur de dev |
+| `npm run dev` | Serveur de dev |
 | `npm run build` | Build de production |
-| `npm run start` | Lance le build de production |
+| `npm run start` | Lance le build |
 | `npm run lint` | Linting |
 
 ## Arborescence
 
 ```
 .
-├── CONTEXT.md                # Contexte produit + roadmap (à lire en premier)
+├── CONTEXT.md                # À lire en premier
 ├── app/
-│   ├── layout.tsx           # Layout racine
-│   ├── globals.css          # Tailwind + design tokens
-│   ├── page.tsx             # Landing marketing
-│   ├── login/page.tsx
-│   ├── signup/page.tsx
-│   ├── profiles/page.tsx    # Sélection de profil (Netflix-like)
-│   ├── browse/page.tsx      # Catalogue principal
-│   ├── watch/[id]/page.tsx  # Lecteur vidéo
-│   ├── pricing/page.tsx
-│   ├── my-list/page.tsx
+│   ├── layout.tsx
+│   ├── globals.css           # Tokens + utilitaires custom
+│   ├── page.tsx              # Landing éditoriale
+│   ├── login/, signup/
+│   ├── profiles/             # Sélection de profil
+│   ├── browse/               # Catalogue + hero cinéma
+│   ├── live/                 # Diffusions en direct
+│   ├── watch/[id]/           # Lecteur + détails
+│   ├── pricing/              # Toggle mensuel/annuel
+│   ├── my-list/
 │   └── not-found.tsx
 ├── components/
-│   ├── LogoMark.tsx
-│   ├── Navbar.tsx
-│   ├── Footer.tsx
-│   ├── AuthForm.tsx
-│   ├── MovieCard.tsx
-│   ├── MovieRow.tsx
-│   ├── VideoPlayer.tsx       # Player + simulation de pub (15s, skip à 5s)
-│   └── landing/
-│       ├── Hero.tsx
-│       ├── Features.tsx
-│       ├── Showcase.tsx
-│       ├── PricingTeaser.tsx
-│       ├── Testimonials.tsx
-│       ├── FAQ.tsx
-│       └── CTA.tsx
+│   ├── Navbar, Footer, LogoMark, AtmosphereBg
+│   ├── AuthForm
+│   ├── MovieCard, MovieRow
+│   ├── VideoPlayer           # MP4 réel + simulation de pub
+│   └── landing/              # Hero, Features, Showcase, PricingTeaser, Testimonials, FAQ, CTA
 └── lib/
-    ├── mock-data.ts          # Catalogue mocké (12 titres, 6 catégories)
-    ├── store.ts              # Zustand (auth/profil/watchlist/premium)
+    ├── mock-data.ts          # Titres TMDB + vidéo sample
+    ├── store.ts              # Zustand
     └── utils.ts
 ```
 
 ## Logique freemium
 
-- Par défaut, un utilisateur est **Free** → `VideoPlayer` affiche un overlay pub 15s avec skip après 5s.
-- Bouton "Passer Premium" → bascule `isPremium = true` dans le store (mock, pas de paiement réel).
-- Une fois Premium, plus de pub. Badge "Premium" visible dans la Navbar.
-- Le store est persisté en `localStorage` sous la clé `vibeflix-store`.
+- Free par défaut → `VideoPlayer` affiche un overlay pub 15s (skip à 5s).
+- "Passer Premium" sur `/pricing` bascule `isPremium = true` dans le store.
+- Une fois Premium, plus de pub. Badge visible dans la Navbar.
+- Tarif : **1 €/mois** ou **5 €/an** (toggle sur `/pricing`).
+- Persistance : `localStorage` clé `vibeflix-store-v2`.
 
-## À faire (cf. `CONTEXT.md`)
+## Sources de contenu
 
-- Brancher la source vidéo réelle (flux externe) dans `components/VideoPlayer.tsx`.
-- Auth réelle (NextAuth / Clerk / Supabase).
-- Backend pour persister profils et watchlist côté serveur.
-- Paiement Stripe pour le Premium.
-- Recommandations personnalisées.
+- **Images** : `image.tmdb.org` (autorisé dans `next.config.ts`).
+- **Vidéo de démo** : Big Buck Bunny via `commondatastorage.googleapis.com`. À remplacer par le flux réel.
+- **Avatars témoignages** : `images.unsplash.com`.
 
-## Notes
+## Roadmap
 
-- Toutes les images posters/backdrops proviennent d'Unsplash via URL (autorisé dans `next.config.ts`).
-- Aucune clé d'API n'est requise pour faire tourner la v1.
-- Le projet est **prêt à `npm install && npm run dev`**.
+Voir la section "À faire" de [`CONTEXT.md`](./CONTEXT.md) — brancher le flux vidéo réel, auth réelle, paiement Stripe, recherche globale, etc.
