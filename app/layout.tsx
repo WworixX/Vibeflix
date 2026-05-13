@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Fraunces, Geist } from "next/font/google";
 import "./globals.css";
+import { Splash } from "@/components/Splash";
 
 const geist = Geist({
   subsets: ["latin"],
@@ -31,6 +32,7 @@ export default function RootLayout({
   return (
     <html lang="fr" className={`${geist.variable} ${fraunces.variable}`}>
       <body className="relative min-h-screen font-sans antialiased">
+        <Splash />
         <div className="relative z-[2]">{children}</div>
       </body>
     </html>

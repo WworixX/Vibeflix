@@ -2,8 +2,7 @@ import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
 import { Hero } from "@/components/landing/Hero";
 import { TrendingPreview } from "@/components/landing/TrendingPreview";
-import { Features } from "@/components/landing/Features";
-import { Showcase } from "@/components/landing/Showcase";
+import { CatalogPreview } from "@/components/landing/CatalogPreview";
 import { PricingTeaser } from "@/components/landing/PricingTeaser";
 import { Testimonials } from "@/components/landing/Testimonials";
 import { FAQ } from "@/components/landing/FAQ";
@@ -16,8 +15,7 @@ export default function LandingPage() {
       <main>
         <Hero />
         <TrendingPreview />
-        <Features />
-        <Showcase />
+        <CatalogPreview />
         <PricingTeaser />
         <Testimonials />
         <FAQ />
