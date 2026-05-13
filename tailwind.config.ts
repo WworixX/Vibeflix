@@ -61,11 +61,16 @@ const config: Config = {
           "0%,100%": { opacity: "0.35" },
           "50%": { opacity: "0.55" },
         },
+        marquee: {
+          "0%": { transform: "translateX(0)" },
+          "100%": { transform: "translateX(-50%)" },
+        },
       },
       animation: {
         shimmer: "shimmer 2.4s linear infinite",
         drift: "drift 18s ease-in-out infinite",
         breathe: "breathe 7s ease-in-out infinite",
+        marquee: "marquee 55s linear infinite",
       },
     },
   },
