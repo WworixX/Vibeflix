@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Fraunces, Geist } from "next/font/google";
+import { Geist } from "next/font/google";
 import "./globals.css";
 import { Splash } from "@/components/Splash";
 
@@ -7,13 +7,6 @@ const geist = Geist({
   subsets: ["latin"],
   variable: "--font-geist",
   display: "swap",
-});
-
-const fraunces = Fraunces({
-  subsets: ["latin"],
-  variable: "--font-fraunces",
-  display: "swap",
-  axes: ["opsz", "SOFT"],
 });
 
 export const metadata: Metadata = {
@@ -30,7 +23,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="fr" className={`${geist.variable} ${fraunces.variable}`}>
+    <html lang="fr" className={geist.variable}>
       <body className="relative min-h-screen font-sans antialiased">
         <Splash />
         <div className="relative z-[2]">{children}</div>

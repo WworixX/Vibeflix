@@ -22,7 +22,7 @@ export default function MyListPage() {
               <span className="chip">Votre sélection</span>
               <h1 className="h-display mt-4 text-5xl md:text-7xl">
                 Ma{" "}
-                <span className="italic text-mint-300/90" style={{ fontVariationSettings: "'SOFT' 80" }}>
+                <span className="text-mint-300/90">
                   liste.
                 </span>
               </h1>

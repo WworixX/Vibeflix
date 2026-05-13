@@ -30,7 +30,7 @@ const config: Config = {
       },
       fontFamily: {
         sans: ["var(--font-geist)", "ui-sans-serif", "system-ui", "sans-serif"],
-        display: ["var(--font-fraunces)", "Georgia", "serif"],
+        display: ["var(--font-geist)", "ui-sans-serif", "system-ui", "sans-serif"],
       },
       backgroundImage: {
         "mint-gradient":

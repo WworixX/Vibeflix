@@ -44,7 +44,7 @@ export default function PricingPage() {
           </span>
           <h1 className="h-display mx-auto mt-6 max-w-3xl text-balance text-5xl md:text-8xl">
             Le streaming, à{" "}
-            <span className="italic text-mint-300/90" style={{ fontVariationSettings: "'SOFT' 80" }}>
+            <span className="text-mint-300/90">
               prix juste.
             </span>
           </h1>

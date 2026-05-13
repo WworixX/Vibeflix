@@ -41,7 +41,7 @@ export default function ProfilesPage() {
             className="h-display text-5xl md:text-7xl"
           >
             Qui regarde{" "}
-            <span className="italic text-mint-300/90" style={{ fontVariationSettings: "'SOFT' 80" }}>
+            <span className="text-mint-300/90">
               ce soir
             </span>
             ?

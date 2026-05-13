@@ -86,6 +86,6 @@
     @apply flex items-center gap-3 rounded-2xl border border-white/10 bg-white/[0.03] px-4 py-3.5 transition focus-within:border-mint-400/40 focus-within:bg-white/[0.05];
   }
   .h-display {
-    @apply font-display font-medium tracking-[-0.02em] leading-[0.95];
+    @apply font-sans font-semibold tracking-[-0.035em] leading-[0.95];
   }
 }

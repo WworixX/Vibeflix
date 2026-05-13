@@ -9,7 +9,7 @@ Plateforme de streaming films, séries et live, positionnée comme **l'alternati
 
 ## Direction artistique
 - **Palette** : mint/emerald sur charcoal profond. Pas de noir pur, pas de néon — un vert légèrement frais (`#3FCB89` → `#0F6E4D`) sur un fond `#0B1411`.
-- **Typo** : Fraunces (display, axe `SOFT` activé pour l'italique organique) + Geist (UI).
+- **Typo** : Geist (UI + display, en font-semibold avec tracking serré pour les titres).
 - **Coins** : doux partout (`rounded-2xl`, `rounded-3xl`, `rounded-[28px]`).
 - **Gradients** : mesh atmosphériques façon Linear/Stripe, jamais agressifs.
 - **Motion** : "exhales, not bounces". Easing `cubic-bezier(0.22, 0.61, 0.36, 1)`, durées longues (500–1000ms), pas de spring juvénile.

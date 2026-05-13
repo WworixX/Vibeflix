@@ -19,7 +19,7 @@ export function CTA() {
 
         <h2 className="h-display mx-auto max-w-3xl text-balance text-4xl md:text-7xl">
           Votre prochain film favori{" "}
-          <span className="italic text-mint-300/90" style={{ fontVariationSettings: "'SOFT' 80" }}>
+          <span className="text-mint-300/90">
             attend à un clic.
           </span>
         </h2>

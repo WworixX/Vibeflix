@@ -40,14 +40,14 @@ export function AuthForm({ mode }: { mode: "login" | "signup" }) {
         {mode === "login" ? (
           <>
             Bon{" "}
-            <span className="italic text-mint-300/90" style={{ fontVariationSettings: "'SOFT' 80" }}>
+            <span className="text-mint-300/90">
               retour.
             </span>
           </>
         ) : (
           <>
             Bienvenue sur{" "}
-            <span className="italic text-mint-300/90" style={{ fontVariationSettings: "'SOFT' 80" }}>
+            <span className="text-mint-300/90">
               VibeFlix.
             </span>
           </>

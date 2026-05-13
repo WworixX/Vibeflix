@@ -21,7 +21,7 @@ export default function LivePage() {
           </div>
           <h1 className="h-display mt-5 text-5xl md:text-7xl">
             Ce qui passe{" "}
-            <span className="italic text-mint-300/90" style={{ fontVariationSettings: "'SOFT' 80" }}>
+            <span className="text-mint-300/90">
               maintenant.
             </span>
           </h1>

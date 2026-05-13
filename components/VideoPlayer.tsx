@@ -123,7 +123,7 @@ export function VideoPlayer({ title }: { title: Title }) {
               <span className="chip">Publicité</span>
               <h3 className="h-display mt-5 text-3xl md:text-4xl">
                 Découvrez{" "}
-                <span className="italic text-mint-300" style={{ fontVariationSettings: "'SOFT' 80" }}>
+                <span className="text-mint-300">
                   Aurora Pods.
                 </span>
               </h3>

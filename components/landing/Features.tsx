@@ -43,7 +43,7 @@ export function Features() {
         <span className="chip">Pourquoi VibeFlix</span>
         <h2 className="h-display mt-5 text-balance text-4xl md:text-6xl">
           Tout ce qu'une plateforme devrait être.
-          <span className="italic text-mint-300/90" style={{ fontVariationSettings: "'SOFT' 80" }}>
+          <span className="text-mint-300/90">
             {" "}Rien d'autre.
           </span>
         </h2>

@@ -10,7 +10,7 @@ export default function NotFound() {
         <LogoMark className="mx-auto justify-center" />
         <h1 className="h-display mt-10 text-7xl md:text-9xl">
           4
-          <span className="italic text-mint-300/90" style={{ fontVariationSettings: "'SOFT' 80" }}>
+          <span className="text-mint-300/90">
             0
           </span>
           4

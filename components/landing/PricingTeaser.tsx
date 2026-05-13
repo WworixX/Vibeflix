@@ -40,7 +40,7 @@ export function PricingTeaser() {
         <span className="chip">Tarifs</span>
         <h2 className="h-display mt-4 text-balance text-4xl md:text-6xl">
           Gratuit. Ou Premium.{" "}
-          <span className="italic text-mint-300/90" style={{ fontVariationSettings: "'SOFT' 80" }}>
+          <span className="text-mint-300/90">
             Rien entre.
           </span>
         </h2>

@@ -11,7 +11,7 @@ Plateforme de streaming films, séries et live — pensée comme l'alternative �
 - **Framer Motion** pour les transitions
 - **Zustand** + persist (auth mock, profils, watchlist, statut Premium)
 - **Lucide React** pour les icônes
-- Polices : **Fraunces** (display) + **Geist** (UI)
+- Police : **Geist** (display + UI)
 
 ## Installation
 
