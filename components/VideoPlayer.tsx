@@ -156,7 +156,6 @@ function ExternalPlayer({
             allow="autoplay; encrypted-media; fullscreen; picture-in-picture"
             allowFullScreen
             referrerPolicy="origin"
-            sandbox="allow-scripts allow-same-origin allow-forms allow-presentation allow-pointer-lock allow-orientation-lock"
             onLoad={() => setLoading(false)}
             className="absolute inset-0 h-full w-full"
           />
