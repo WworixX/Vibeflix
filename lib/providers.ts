@@ -17,8 +17,10 @@ export const PROVIDERS: Provider[] = [
   {
     id: "vidlink",
     name: "VidLink",
-    movie: (id) => `https://vidlink.pro/movie/${id}`,
-    tv: (id, s, e) => `https://vidlink.pro/tv/${id}/${s}/${e}`,
+    movie: (id) =>
+      `https://vidlink.pro/movie/${id}?primaryColor=22B97A&secondaryColor=3FCB89&iconColor=ECF6F1&autoplay=true&title=false`,
+    tv: (id, s, e) =>
+      `https://vidlink.pro/tv/${id}/${s}/${e}?primaryColor=22B97A&secondaryColor=3FCB89&iconColor=ECF6F1&autoplay=true&title=false`,
   },
   {
     id: "vidsrc-xyz",
