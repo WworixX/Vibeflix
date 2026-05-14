@@ -14,6 +14,9 @@ export type Title = {
   featured?: boolean;
   continueAt?: number;
   mood: "Calme" | "Tension" | "Cérébral" | "Lumineux" | "Sombre" | "Romance";
+  tmdbId?: number;
+  defaultSeason?: number;
+  defaultEpisode?: number;
 };
 
 const poster = (p: string) => `https://image.tmdb.org/t/p/w780${p}`;
@@ -35,6 +38,7 @@ export const titles: Title[] = [
     featured: true,
     trending: true,
     mood: "Tension",
+    tmdbId: 693134,
   },
   {
     id: "stranger-things",
@@ -51,6 +55,9 @@ export const titles: Title[] = [
     trending: true,
     continueAt: 38,
     mood: "Sombre",
+    tmdbId: 66732,
+    defaultSeason: 1,
+    defaultEpisode: 1,
   },
   {
     id: "the-last-of-us",
@@ -66,6 +73,9 @@ export const titles: Title[] = [
     backdrop: backdrop("/uDgy6hyPd82kOHh6I95FLtLnj6p.jpg"),
     trending: true,
     mood: "Sombre",
+    tmdbId: 100088,
+    defaultSeason: 1,
+    defaultEpisode: 1,
   },
   {
     id: "wednesday",
@@ -80,6 +90,9 @@ export const titles: Title[] = [
     poster: poster("/9PFonBhy4cQy7Jz20NpMygczOkv.jpg"),
     backdrop: backdrop("/iHSwvRVsRyxpX7FE7GbviaDvgGZ.jpg"),
     mood: "Cérébral",
+    tmdbId: 119051,
+    defaultSeason: 1,
+    defaultEpisode: 1,
   },
   {
     id: "oppenheimer",
@@ -95,6 +108,7 @@ export const titles: Title[] = [
     backdrop: backdrop("/fm6KqXpk3M2HVveHwCrBSSBaO0V.jpg"),
     trending: true,
     mood: "Cérébral",
+    tmdbId: 872585,
   },
   {
     id: "interstellar",
@@ -110,6 +124,7 @@ export const titles: Title[] = [
     backdrop: backdrop("/pbrkL804c8yAv3zBZR4QPEafpAR.jpg"),
     continueAt: 64,
     mood: "Cérébral",
+    tmdbId: 157336,
   },
   {
     id: "house-of-the-dragon",
@@ -124,6 +139,9 @@ export const titles: Title[] = [
     poster: poster("/z2yahl2uefxDCl0nogcRBstwruJ.jpg"),
     backdrop: backdrop("/etj8E2o4Bxx7LbBxAzbeKSF8Bdx.jpg"),
     mood: "Sombre",
+    tmdbId: 94997,
+    defaultSeason: 1,
+    defaultEpisode: 1,
   },
   {
     id: "breaking-bad",
@@ -138,6 +156,9 @@ export const titles: Title[] = [
     poster: poster("/ggFHVNu6YYI5L9pCfOacjizRGt.jpg"),
     backdrop: backdrop("/tsRy63Mu5cu022Q9x4cMnLQXSAI.jpg"),
     mood: "Sombre",
+    tmdbId: 1396,
+    defaultSeason: 1,
+    defaultEpisode: 1,
   },
   {
     id: "the-bear",
@@ -153,6 +174,9 @@ export const titles: Title[] = [
     backdrop: backdrop("/uYg5HbWnzwMq0iexcCC7DyHpsx2.jpg"),
     trending: true,
     mood: "Tension",
+    tmdbId: 136315,
+    defaultSeason: 1,
+    defaultEpisode: 1,
   },
   {
     id: "everything-everywhere",
@@ -167,6 +191,7 @@ export const titles: Title[] = [
     poster: poster("/w3LxiVYdWWRvEVdn5RYq6jIqkb1.jpg"),
     backdrop: backdrop("/nGxUxi3PfXDRm7Vg95VBNgNM8yc.jpg"),
     mood: "Lumineux",
+    tmdbId: 545611,
   },
   {
     id: "succession",
@@ -181,6 +206,9 @@ export const titles: Title[] = [
     poster: poster("/7HW47XbkNQ5fiwQFYGWdw9gs144.jpg"),
     backdrop: backdrop("/7HW47XbkNQ5fiwQFYGWdw9gs144.jpg"),
     mood: "Cérébral",
+    tmdbId: 76331,
+    defaultSeason: 1,
+    defaultEpisode: 1,
   },
   {
     id: "the-batman",
@@ -195,6 +223,7 @@ export const titles: Title[] = [
     poster: poster("/74xTEgt7R36Fpooo50r9T25onhq.jpg"),
     backdrop: backdrop("/b0PlSFdDwbyK0cf5RxwDpaOJQvQ.jpg"),
     mood: "Sombre",
+    tmdbId: 414906,
   },
   {
     id: "spider-verse",
@@ -210,6 +239,7 @@ export const titles: Title[] = [
     backdrop: backdrop("/4HodYYKEIsGOdinkGi2Ucfxxam.jpg"),
     trending: true,
     mood: "Lumineux",
+    tmdbId: 569094,
   },
   {
     id: "barbie",
@@ -224,6 +254,7 @@ export const titles: Title[] = [
     poster: poster("/iuFNMS8U5cb6xfzi51Dbkovj7vM.jpg"),
     backdrop: backdrop("/nHf61UzkfFno5X1ofIhugCPus2R.jpg"),
     mood: "Lumineux",
+    tmdbId: 346698,
   },
   {
     id: "arcane",
@@ -238,6 +269,9 @@ export const titles: Title[] = [
     poster: poster("/fqldf2t8ztc9aiwn3k6mlX3tvRT.jpg"),
     backdrop: backdrop("/8Z8dptJEypuLoOQro1WugD855YE.jpg"),
     mood: "Tension",
+    tmdbId: 94605,
+    defaultSeason: 1,
+    defaultEpisode: 1,
   },
   {
     id: "anatomie-chute",
@@ -252,6 +286,7 @@ export const titles: Title[] = [
     poster: poster("/kQs6keheMwCxJxrzV83VUwFtHkB.jpg"),
     backdrop: backdrop("/3agtMkw7CryBPmaybBgWGRtoENk.jpg"),
     mood: "Cérébral",
+    tmdbId: 915935,
   },
 ];
 
@@ -300,3 +335,18 @@ export const rows = [
 
 export const SAMPLE_VIDEO_URL =
   "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4";
+
+export const VIDSRC_BASE = "https://vidsrc.to/embed";
+
+export function buildEmbedUrl(t: Title): string | null {
+  if (!t.tmdbId) return null;
+  if (t.kind === "film") {
+    return `${VIDSRC_BASE}/movie/${t.tmdbId}`;
+  }
+  if (t.kind === "serie") {
+    const s = t.defaultSeason ?? 1;
+    const e = t.defaultEpisode ?? 1;
+    return `${VIDSRC_BASE}/tv/${t.tmdbId}/${s}/${e}`;
+  }
+  return null;
+}
