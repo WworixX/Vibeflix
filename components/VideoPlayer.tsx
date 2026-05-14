@@ -1,11 +1,11 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import Link from "next/link";
-import { Play, Pause, Volume2, VolumeX, Maximize, X, Loader2, RefreshCw } from "lucide-react";
+import { Play, Pause, Volume2, VolumeX, Maximize, X, Loader2, RefreshCw, ChevronDown } from "lucide-react";
 import type { Title } from "@/lib/mock-data";
 import { SAMPLE_VIDEO_URL } from "@/lib/mock-data";
-import { PROVIDERS, buildProviderUrl } from "@/lib/providers";
+import { PROVIDERS, LANG_ORDER, buildProviderUrl, type Lang, type Provider } from "@/lib/providers";
 import { cn } from "@/lib/utils";
 
 export function VideoPlayer({ title }: { title: Title }) {
@@ -39,20 +39,38 @@ export function VideoPlayer({ title }: { title: Title }) {
 }
 
 function ExternalPlayer({ title, onFullscreen }: { title: Title; onFullscreen: () => void }) {
-  const [providerIdx, setProviderIdx] = useState(0);
+  const langs = useMemo(() => {
+    const present = new Set(PROVIDERS.map((p) => p.lang));
+    return LANG_ORDER.filter((l) => present.has(l));
+  }, []);
+
+  const [lang, setLang] = useState<Lang>(langs[0] ?? "MULTI");
+  const providersForLang = useMemo(
+    () => PROVIDERS.filter((p) => p.lang === lang),
+    [lang]
+  );
+  const [providerId, setProviderId] = useState<string>(providersForLang[0]?.id ?? "");
+  const provider = providersForLang.find((p) => p.id === providerId) ?? providersForLang[0];
+
+  const [open, setOpen] = useState(false);
   const [loading, setLoading] = useState(true);
   const [reloadKey, setReloadKey] = useState(0);
 
-  const provider = PROVIDERS[providerIdx];
-  const url = buildProviderUrl(provider, title);
+  // Re-sync when lang changes
+  useEffect(() => {
+    if (!providersForLang.find((p) => p.id === providerId)) {
+      setProviderId(providersForLang[0]?.id ?? "");
+    }
+  }, [lang, providersForLang, providerId]);
 
   useEffect(() => {
     setLoading(true);
     const t = setTimeout(() => setLoading(false), 3500);
     return () => clearTimeout(t);
-  }, [providerIdx, reloadKey]);
+  }, [providerId, reloadKey]);
 
-  if (!url) return null;
+  const url = provider ? buildProviderUrl(provider, title) : null;
+  if (!url || !provider) return null;
 
   return (
     <>
@@ -97,26 +115,74 @@ function ExternalPlayer({ title, onFullscreen }: { title: Title; onFullscreen: (
         </button>
       </div>
 
+      {/* Source switcher: tab langues + dropdown lecteurs */}
       <div className="absolute bottom-4 left-1/2 z-30 w-[min(94%,720px)] -translate-x-1/2">
-        <div className="flex items-center gap-1.5 overflow-x-auto rounded-full border border-white/10 bg-black/55 p-1 backdrop-blur scrollbar-hide">
-          <span className="sticky left-0 hidden shrink-0 bg-black/55 px-2 text-[10px] uppercase tracking-[0.16em] text-white/45 sm:inline">
-            Source
-          </span>
-          {PROVIDERS.map((p, i) => (
+        <div className="flex flex-col gap-2 rounded-3xl border border-white/10 bg-black/65 p-2 backdrop-blur-md">
+          <div className="flex items-center gap-1 overflow-x-auto scrollbar-hide">
+            {langs.map((l) => (
+              <button
+                key={l}
+                onClick={() => setLang(l)}
+                className={cn(
+                  "shrink-0 rounded-full px-3 py-1 text-[10px] font-semibold uppercase tracking-[0.16em] transition",
+                  l === lang
+                    ? "bg-mint-gradient text-char-950"
+                    : "text-white/55 hover:bg-white/[0.06] hover:text-white"
+                )}
+              >
+                {l}
+                <span className="ml-1.5 opacity-60">
+                  {PROVIDERS.filter((p) => p.lang === l).length}
+                </span>
+              </button>
+            ))}
             <button
-              key={p.id}
-              onClick={() => setProviderIdx(i)}
-              className={cn(
-                "shrink-0 rounded-full px-3 py-1 text-[11px] font-medium transition",
-                i === providerIdx
-                  ? "bg-mint-gradient text-char-950"
-                  : "text-white/70 hover:bg-white/[0.08] hover:text-white"
-              )}
-              title={`Charger via ${p.name}`}
+              onClick={() => setOpen((o) => !o)}
+              className="ml-auto shrink-0 inline-flex items-center gap-1.5 rounded-full bg-white/[0.06] px-3 py-1 text-[11px] text-white/85 hover:bg-white/[0.10]"
             >
-              {p.name}
+              <span className="font-medium">{provider.name}</span>
+              {provider.hd && (
+                <span className="rounded-md bg-mint-400/20 px-1.5 py-0.5 text-[9px] font-semibold text-mint-200">
+                  HD
+                </span>
+              )}
+              <ChevronDown
+                className={cn("h-3 w-3 transition-transform", open && "rotate-180")}
+              />
             </button>
-          ))}
+          </div>
+
+          {open && (
+            <div className="max-h-60 overflow-y-auto rounded-2xl border border-white/[0.06] bg-black/40 p-1.5">
+              {providersForLang.map((p) => (
+                <button
+                  key={p.id}
+                  onClick={() => {
+                    setProviderId(p.id);
+                    setOpen(false);
+                  }}
+                  className={cn(
+                    "flex w-full items-center justify-between gap-3 rounded-xl px-3 py-2 text-left text-sm transition",
+                    p.id === provider.id
+                      ? "bg-white/[0.08] text-white"
+                      : "text-white/70 hover:bg-white/[0.05] hover:text-white"
+                  )}
+                >
+                  <span className="font-medium">{p.name}</span>
+                  {p.hd && (
+                    <span className="rounded-md bg-mint-400/20 px-1.5 py-0.5 text-[9px] font-semibold text-mint-200">
+                      HD
+                    </span>
+                  )}
+                </button>
+              ))}
+              {providersForLang.length === 0 && (
+                <div className="px-3 py-4 text-center text-xs text-white/40">
+                  Aucun lecteur pour cette catégorie pour l'instant.
+                </div>
+              )}
+            </div>
+          )}
         </div>
       </div>
     </>
