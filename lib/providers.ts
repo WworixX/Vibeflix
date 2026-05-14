@@ -9,11 +9,29 @@ export type Provider = {
 
 export const PROVIDERS: Provider[] = [
   {
+    id: "vidsrc-cc",
+    name: "VidSrc CC",
+    movie: (id) => `https://vidsrc.cc/v2/embed/movie/${id}`,
+    tv: (id, s, e) => `https://vidsrc.cc/v2/embed/tv/${id}/${s}/${e}`,
+  },
+  {
+    id: "vidlink",
+    name: "VidLink",
+    movie: (id) => `https://vidlink.pro/movie/${id}`,
+    tv: (id, s, e) => `https://vidlink.pro/tv/${id}/${s}/${e}`,
+  },
+  {
     id: "vidsrc-xyz",
     name: "VidSrc XYZ",
     movie: (id) => `https://vidsrc.xyz/embed/movie?tmdb=${id}`,
     tv: (id, s, e) =>
       `https://vidsrc.xyz/embed/tv?tmdb=${id}&season=${s}&episode=${e}`,
+  },
+  {
+    id: "moviesapi",
+    name: "MoviesAPI",
+    movie: (id) => `https://moviesapi.club/movie/${id}`,
+    tv: (id, s, e) => `https://moviesapi.club/tv/${id}-${s}-${e}`,
   },
   {
     id: "embed-su",

@@ -96,9 +96,9 @@ function ExternalPlayer({ title, onFullscreen }: { title: Title; onFullscreen: (
         </button>
       </div>
 
-      <div className="absolute bottom-4 left-1/2 z-30 -translate-x-1/2">
-        <div className="flex items-center gap-1.5 rounded-full border border-white/10 bg-black/55 p-1 backdrop-blur">
-          <span className="hidden px-2 text-[10px] uppercase tracking-[0.16em] text-white/45 sm:inline">
+      <div className="absolute bottom-4 left-1/2 z-30 w-[min(94%,720px)] -translate-x-1/2">
+        <div className="flex items-center gap-1.5 overflow-x-auto rounded-full border border-white/10 bg-black/55 p-1 backdrop-blur scrollbar-hide">
+          <span className="sticky left-0 hidden shrink-0 bg-black/55 px-2 text-[10px] uppercase tracking-[0.16em] text-white/45 sm:inline">
             Source
           </span>
           {PROVIDERS.map((p, i) => (
@@ -106,7 +106,7 @@ function ExternalPlayer({ title, onFullscreen }: { title: Title; onFullscreen: (
               key={p.id}
               onClick={() => setProviderIdx(i)}
               className={cn(
-                "rounded-full px-3 py-1 text-[11px] font-medium transition",
+                "shrink-0 rounded-full px-3 py-1 text-[11px] font-medium transition",
                 i === providerIdx
                   ? "bg-mint-gradient text-char-950"
                   : "text-white/70 hover:bg-white/[0.08] hover:text-white"
