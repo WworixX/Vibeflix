@@ -2,16 +2,15 @@
 
 import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
-import {
-  Play, Pause, Volume2, VolumeX, Maximize, X, Loader2, AlertTriangle,
-} from "lucide-react";
+import { Play, Pause, Volume2, VolumeX, Maximize, X, Loader2, RefreshCw } from "lucide-react";
 import type { Title } from "@/lib/mock-data";
-import { SAMPLE_VIDEO_URL, buildEmbedUrl } from "@/lib/mock-data";
+import { SAMPLE_VIDEO_URL } from "@/lib/mock-data";
+import { PROVIDERS, buildProviderUrl } from "@/lib/providers";
+import { cn } from "@/lib/utils";
 
 export function VideoPlayer({ title }: { title: Title }) {
-  const embedUrl = buildEmbedUrl(title);
-  const useExternal = !!embedUrl;
   const wrapperRef = useRef<HTMLDivElement>(null);
+  const hasTmdb = !!title.tmdbId && (title.kind === "film" || title.kind === "serie");
 
   const enterFs = () => wrapperRef.current?.requestFullscreen?.();
 
@@ -20,13 +19,13 @@ export function VideoPlayer({ title }: { title: Title }) {
       ref={wrapperRef}
       className="group relative aspect-video w-full overflow-hidden rounded-3xl border border-white/[0.06] bg-black"
     >
-      {useExternal ? (
-        <ExternalPlayer embedUrl={embedUrl!} title={title.title} />
+      {hasTmdb ? (
+        <ExternalPlayer title={title} onFullscreen={enterFs} />
       ) : (
         <NativePlayer title={title} />
       )}
 
-      <div className="absolute left-5 top-5 z-20">
+      <div className="absolute left-5 top-5 z-30">
         <Link
           href="/browse"
           className="grid h-10 w-10 place-items-center rounded-full border border-white/10 bg-black/40 text-white backdrop-blur transition hover:bg-black/60"
@@ -35,49 +34,90 @@ export function VideoPlayer({ title }: { title: Title }) {
           <X className="h-4 w-4" />
         </Link>
       </div>
-
-      {useExternal && (
-        <>
-          <div className="absolute right-5 top-5 z-20 flex items-center gap-2">
-            <button
-              onClick={enterFs}
-              className="grid h-10 w-10 place-items-center rounded-full border border-white/10 bg-black/40 text-white backdrop-blur transition hover:bg-black/60"
-              aria-label="Plein écran"
-            >
-              <Maximize className="h-4 w-4" />
-            </button>
-          </div>
-
-          <div className="pointer-events-none absolute bottom-4 left-1/2 z-20 -translate-x-1/2">
-            <span className="inline-flex items-center gap-1.5 rounded-full border border-amber-400/20 bg-black/50 px-3 py-1 text-[10px] uppercase tracking-[0.16em] text-amber-200/80 backdrop-blur">
-              <AlertTriangle className="h-3 w-3" />
-              Lecteur externe
-            </span>
-          </div>
-        </>
-      )}
     </div>
   );
 }
 
-function ExternalPlayer({ embedUrl, title }: { embedUrl: string; title: string }) {
-  const [loaded, setLoaded] = useState(false);
+function ExternalPlayer({ title, onFullscreen }: { title: Title; onFullscreen: () => void }) {
+  const [providerIdx, setProviderIdx] = useState(0);
+  const [loading, setLoading] = useState(true);
+  const [reloadKey, setReloadKey] = useState(0);
+
+  const provider = PROVIDERS[providerIdx];
+  const url = buildProviderUrl(provider, title);
+
+  useEffect(() => {
+    setLoading(true);
+    const t = setTimeout(() => setLoading(false), 3500);
+    return () => clearTimeout(t);
+  }, [providerIdx, reloadKey]);
+
+  if (!url) return null;
+
   return (
     <>
-      {!loaded && (
-        <div className="absolute inset-0 z-10 grid place-items-center bg-black">
-          <Loader2 className="h-8 w-8 animate-spin text-white/70" />
-        </div>
-      )}
       <iframe
-        src={embedUrl}
-        title={title}
+        key={`${provider.id}-${reloadKey}`}
+        src={url}
+        title={`${title.title} — ${provider.name}`}
         allow="autoplay; encrypted-media; fullscreen; picture-in-picture"
         allowFullScreen
         referrerPolicy="origin"
-        onLoad={() => setLoaded(true)}
+        onLoad={() => setLoading(false)}
         className="absolute inset-0 h-full w-full"
       />
+
+      {loading && (
+        <div className="pointer-events-none absolute inset-0 z-10 grid place-items-center bg-black/60 backdrop-blur-sm">
+          <div className="flex flex-col items-center gap-3">
+            <Loader2 className="h-7 w-7 animate-spin text-white/70" />
+            <span className="text-xs text-white/55">
+              Chargement via {provider.name}…
+            </span>
+          </div>
+        </div>
+      )}
+
+      <div className="absolute right-5 top-5 z-30 flex items-center gap-2">
+        <button
+          onClick={() => setReloadKey((k) => k + 1)}
+          className="grid h-10 w-10 place-items-center rounded-full border border-white/10 bg-black/40 text-white backdrop-blur transition hover:bg-black/60"
+          aria-label="Recharger"
+          title="Recharger la source"
+        >
+          <RefreshCw className="h-4 w-4" />
+        </button>
+        <button
+          onClick={onFullscreen}
+          className="grid h-10 w-10 place-items-center rounded-full border border-white/10 bg-black/40 text-white backdrop-blur transition hover:bg-black/60"
+          aria-label="Plein écran"
+        >
+          <Maximize className="h-4 w-4" />
+        </button>
+      </div>
+
+      <div className="absolute bottom-4 left-1/2 z-30 -translate-x-1/2">
+        <div className="flex items-center gap-1.5 rounded-full border border-white/10 bg-black/55 p-1 backdrop-blur">
+          <span className="hidden px-2 text-[10px] uppercase tracking-[0.16em] text-white/45 sm:inline">
+            Source
+          </span>
+          {PROVIDERS.map((p, i) => (
+            <button
+              key={p.id}
+              onClick={() => setProviderIdx(i)}
+              className={cn(
+                "rounded-full px-3 py-1 text-[11px] font-medium transition",
+                i === providerIdx
+                  ? "bg-mint-gradient text-char-950"
+                  : "text-white/70 hover:bg-white/[0.08] hover:text-white"
+              )}
+              title={`Charger via ${p.name}`}
+            >
+              {p.name}
+            </button>
+          ))}
+        </div>
+      </div>
     </>
   );
 }

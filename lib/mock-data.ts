@@ -335,18 +335,3 @@ export const rows = [
 
 export const SAMPLE_VIDEO_URL =
   "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4";
-
-export const VIDSRC_BASE = "https://vidsrc.to/embed";
-
-export function buildEmbedUrl(t: Title): string | null {
-  if (!t.tmdbId) return null;
-  if (t.kind === "film") {
-    return `${VIDSRC_BASE}/movie/${t.tmdbId}`;
-  }
-  if (t.kind === "serie") {
-    const s = t.defaultSeason ?? 1;
-    const e = t.defaultEpisode ?? 1;
-    return `${VIDSRC_BASE}/tv/${t.tmdbId}/${s}/${e}`;
-  }
-  return null;
-}
