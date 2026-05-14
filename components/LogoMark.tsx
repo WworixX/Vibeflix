@@ -12,7 +12,10 @@ export function LogoMark({ className, compact = false }: { className?: string; c
         </span>
       </span>
       {!compact && (
-        <span className="font-display text-[19px] tracking-[-0.02em] text-white">
+        <span
+          className="font-display text-[20px] font-semibold tracking-[-0.04em] text-white"
+          style={{ fontVariationSettings: "'wdth' 92" }}
+        >
           vibeflix<span className="text-mint-400">.</span>
         </span>
       )}

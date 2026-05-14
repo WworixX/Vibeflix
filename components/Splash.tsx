@@ -55,7 +55,10 @@ export function Splash() {
               transition={{ duration: 0.8, delay: 0.25, ease: [0.22, 0.61, 0.36, 1] }}
               className="relative"
             >
-              <h1 className="font-display text-5xl tracking-[-0.03em] text-white md:text-7xl">
+              <h1
+                className="font-display text-6xl font-semibold tracking-[-0.05em] text-white md:text-8xl"
+                style={{ fontVariationSettings: "'wdth' 90" }}
+              >
                 vibeflix<span className="text-mint-400">.</span>
               </h1>
             </motion.div>
