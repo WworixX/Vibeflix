@@ -1,4 +1,5 @@
 import type { StreamProvider } from "./types.js";
+import { vidlinkProvider } from "./vidlink.js";
 import { autoembedProvider } from "./autoembed.js";
 import { embedSuProvider } from "./embed-su.js";
 import { vidsrcCcProvider } from "./vidsrc-cc.js";
@@ -6,12 +7,13 @@ import { videasyProvider } from "./videasy.js";
 import { demoProvider } from "./demo.js";
 
 // Ordre = priorite.
-// autoembed: simple, peu de protections, candidat #1.
-// embed-su: infra separee.
-// vidsrc-cc: ralenti par videasy + bot detection.
-// videasy: API chiffree (peu utile).
+// vidlink: confirme accessible chez user en iframe, candidat #1.
+// autoembed/embed-su: NXDOMAIN actuel chez user.
+// vidsrc-cc: bot detection videasy redirige vers YouTube.
+// videasy API: chiffree.
 // demo: garantie BBB.
 export const PROVIDERS: StreamProvider[] = [
+  vidlinkProvider,
   autoembedProvider,
   embedSuProvider,
   vidsrcCcProvider,
