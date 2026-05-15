@@ -32,6 +32,8 @@ app.get("/api/stream", async (req: Request, res: Response) => {
   const season = req.query.season ? Number(req.query.season) : undefined;
   const episode = req.query.episode ? Number(req.query.episode) : undefined;
   const providerId = req.query.provider as string | undefined;
+  const title = req.query.title as string | undefined;
+  const year = req.query.year ? Number(req.query.year) : undefined;
 
   if (!tmdbId || !type) {
     return res.status(400).json({ error: "tmdbId et type requis" });
@@ -43,7 +45,7 @@ app.get("/api/stream", async (req: Request, res: Response) => {
     return res.json({ ...cached, cached: true });
   }
 
-  const streamReq: StreamRequest = { tmdbId, type, season, episode };
+  const streamReq: StreamRequest = { tmdbId, type, season, episode, title, year };
 
   // Provider explicite OU tous dans l'ordre
   const candidates = providerId

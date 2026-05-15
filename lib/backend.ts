@@ -15,6 +15,8 @@ export type StreamRequest = {
   type: "film" | "serie";
   season?: number;
   episode?: number;
+  title?: string;
+  year?: number;
 };
 
 export async function fetchStream(
@@ -27,6 +29,8 @@ export async function fetchStream(
   });
   if (req.season) params.set("season", String(req.season));
   if (req.episode) params.set("episode", String(req.episode));
+  if (req.title) params.set("title", req.title);
+  if (req.year) params.set("year", String(req.year));
 
   const res = await fetch(`${BACKEND_URL}/api/stream?${params.toString()}`, {
     signal,

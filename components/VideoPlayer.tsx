@@ -81,6 +81,8 @@ function BackendPlayer({
           type: title.kind === "film" ? "film" : "serie",
           season,
           episode,
+          title: title.title,
+          year: title.year,
         },
         ac.signal
       );

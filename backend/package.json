@@ -9,6 +9,7 @@
     "build": "tsc"
   },
   "dependencies": {
+    "@consumet/extensions": "^1.7.0",
     "cors": "^2.8.5",
     "express": "^4.21.1",
     "playwright": "^1.49.0"
