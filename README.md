@@ -1,79 +1,70 @@
 # VibeFlix
 
-Plateforme de streaming films, séries et live — pensée comme l'alternative éditoriale au streaming corporate. Mint sur charcoal, typo Fraunces, motion en "exhales".
+Plateforme streaming films/séries avec lecteur natif sans pub tierce.
 
-> Le contexte produit complet, la direction artistique, et la roadmap sont dans [`CONTEXT.md`](./CONTEXT.md).
+Pipeline: backend Playwright scrape `.m3u8` derrière les players d'aggregateurs → frontend hls.js joue le flux dans `<video>` VibeFlix maison. Aucune iframe, aucune pub injectée par le provider.
+
+> Contexte produit, archi détaillée et roadmap dans [`CONTEXT.md`](./CONTEXT.md).
 
 ## Stack
 
-- **Next.js 15** (App Router) + **TypeScript**
-- **Tailwind CSS** v3 (design system étendu — palette `char/mint`, easing `exhale`)
-- **Framer Motion** pour les transitions
-- **Zustand** + persist (auth mock, profils, watchlist, statut Premium)
-- **Lucide React** pour les icônes
-- Polices : **Bricolage Grotesque** (display + logo, axes `opsz` + `wdth`) + **Geist** (corps de texte)
+- **Frontend** (Vercel): Next.js 15 + TS + Tailwind v3 + Framer Motion + Zustand + hls.js
+- **Backend** (local/VPS): Node.js + TS + Express + Playwright + stealth plugin
+- Polices: **Bricolage Grotesque** (display) + **Geist** (UI)
 
-## Installation
+## Installation locale
 
 ```bash
+# Frontend
 npm install
-npm run dev
-```
+echo "NEXT_PUBLIC_BACKEND_URL=http://localhost:3001" > .env.local
+npm run dev          # http://localhost:3000
 
-→ [http://localhost:3000](http://localhost:3000)
+# Backend (terminal séparé)
+cd backend
+npm install
+npx playwright install chromium
+npm run dev          # http://localhost:3001
+```
 
 ## Scripts
 
 | Commande | Description |
-|----------|-------------|
-| `npm run dev` | Serveur de dev |
-| `npm run build` | Build de production |
-| `npm run start` | Lance le build |
-| `npm run lint` | Linting |
+|---|---|
+| `npm run dev` | Frontend Next.js |
+| `npm run build` | Build prod frontend |
+| `cd backend && npm run dev` | Backend Express + Playwright |
+| `cd backend && HEADFUL=1 npm run dev` | Backend avec Chromium visible (debug) |
 
-## Arborescence
+## Endpoints backend
 
-```
-.
-├── CONTEXT.md                # À lire en premier
-├── app/
-│   ├── layout.tsx
-│   ├── globals.css           # Tokens + utilitaires custom
-│   ├── page.tsx              # Landing éditoriale
-│   ├── login/, signup/
-│   ├── profiles/             # Sélection de profil
-│   ├── browse/               # Catalogue + hero cinéma
-│   ├── live/                 # Diffusions en direct
-│   ├── watch/[id]/           # Lecteur + détails
-│   ├── pricing/              # Toggle mensuel/annuel
-│   ├── my-list/
-│   └── not-found.tsx
-├── components/
-│   ├── Navbar, Footer, LogoMark, AtmosphereBg
-│   ├── AuthForm
-│   ├── MovieCard, MovieRow
-│   ├── VideoPlayer           # MP4 réel + simulation de pub
-│   └── landing/              # Hero, Features, Showcase, PricingTeaser, Testimonials, FAQ, CTA
-└── lib/
-    ├── mock-data.ts          # Titres TMDB + vidéo sample
-    ├── store.ts              # Zustand
-    └── utils.ts
+- `GET /health` — liste providers actifs
+- `GET /api/stream?tmdbId=N&type=film|serie[&season=N&episode=N&imdbId=tt...&lang=VF|VOSTFR|MULTI&title=...&year=N]` — extrait m3u8
+- `GET /api/manifest?url=...&referer=...` — proxy manifest avec rewriting des segments
+
+## Test rapide
+
+```powershell
+curl "http://localhost:3001/api/stream?tmdbId=693134&type=film&imdbId=tt15239678&lang=VF"
 ```
 
-## Logique freemium
+## Providers (état actuel)
 
-- Free par défaut → `VideoPlayer` affiche un overlay pub 15s (skip à 5s).
-- "Passer Premium" sur `/pricing` bascule `isPremium = true` dans le store.
-- Une fois Premium, plus de pub. Badge visible dans la Navbar.
-- Tarif : **1 €/mois** ou **5 €/an** (toggle sur `/pricing`).
-- Persistance : `localStorage` clé `vibeflix-store-v2`.
+| ID | Lang | Notes |
+|---|---|---|
+| frembed | VF | 3 hosts en cascade (.icu/.li/.cc), IMDB IDs |
+| vidlink-vf | VF | Vidlink `?dub=fr` (param souvent ignoré) |
+| vidlink-vostfr | VOSTFR | Vidlink `?sub=fr` |
+| vidlink | MULTI | ✓ Confirmé fonctionnel |
+| demo | MULTI | Big Buck Bunny libre, fallback garanti |
 
-## Sources de contenu
+Voir CONTEXT.md pour explications, retirés, et providers à essayer.
 
-- **Images** : `image.tmdb.org` (autorisé dans `next.config.ts`).
-- **Vidéo de démo** : Big Buck Bunny via `commondatastorage.googleapis.com`. À remplacer par le flux réel.
-- **Avatars témoignages** : `images.unsplash.com`.
+## Pour aller plus loin
 
-## Roadmap
-
-Voir la section "À faire" de [`CONTEXT.md`](./CONTEXT.md) — brancher le flux vidéo réel, auth réelle, paiement Stripe, recherche globale, etc.
+Roadmap complète dans [`CONTEXT.md`](./CONTEXT.md):
+- Déploiement VPS Hetzner
+- Branchement Adsterra/PopAds Direct Link
+- Sources VF additionnelles (Kweflix-style)
+- Cache persistant (SQLite/Redis)
+- Auth + Stripe Premium

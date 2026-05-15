@@ -1,61 +1,110 @@
 # VibeFlix — Contexte du projet
 
 ## Vision
-Plateforme de streaming films, séries et live, positionnée comme **l'alternative éditoriale et soignée** au streaming corporate. Public cible : 16–28 ans, sensibles au design, qui détectent un template générique en trois secondes. Le produit doit donner envie de s'inscrire **avant** d'avoir compris ce qu'il fait.
-
-## Modèle économique
-- **Free** : tout le catalogue, avec quelques pubs courtes (15s max, skippable à 5s).
-- **Premium** : 1 €/mois ou 5 €/an. Plus de pub, 4K Dolby Vision + Atmos, 5 profils, 4 écrans simultanés, téléchargements illimités.
-
-## Direction artistique
-- **Palette** : mint/emerald sur charcoal profond. Pas de noir pur, pas de néon — un vert légèrement frais (`#3FCB89` → `#0F6E4D`) sur un fond `#0B1411`.
-- **Typo** : **Bricolage Grotesque** (display + logo, axes `opsz` + `wdth`, largeur 90–95 sur les titres pour serrer les lettres) + **Geist** (corps de texte). Bricolage donne son caractère au logo et aux titres, Geist garde le corps de lecture clean.
-- **Coins** : doux partout (`rounded-2xl`, `rounded-3xl`, `rounded-[28px]`).
-- **Gradients** : mesh atmosphériques façon Linear/Stripe, jamais agressifs.
-- **Motion** : "exhales, not bounces". Easing `cubic-bezier(0.22, 0.61, 0.36, 1)`, durées longues (500–1000ms), pas de spring juvénile.
-- **Espacement** : générosité éditoriale. Préférer six éléments respirants à trente entassés.
-- **Grain** : léger overlay SVG noise pour profondeur cinéma.
+Plateforme streaming films, séries, live. Public 16-28 ans sensibles design. Modèle économique: pub maison au pre-roll (ad-gate clic obligatoire), aucune pub tierce dans le lecteur (scraping m3u8 direct).
 
 ## Stack
-- **Next.js 15** (App Router, RSC) + **TypeScript**
-- **Tailwind CSS** v3 (config étendue : palette `char/mint`, easing `exhale`, keyframes `drift/breathe`)
-- **Framer Motion** pour les transitions
-- **Zustand** + `persist` (`vibeflix-store-v2`) — auth mock, profils, watchlist, statut Premium
-- **Lucide React** pour les icônes
-- Polices via `next/font/google` (Fraunces axes `opsz` + `SOFT`, Geist)
+
+**Frontend** (Vercel)
+- Next.js 15 App Router + TS
+- Tailwind v3 (palette mint/charcoal)
+- Framer Motion (motion easing exhale)
+- Zustand (auth/profils/watchlist persistés)
+- Bricolage Grotesque (display) + Geist (UI)
+- hls.js (lecteur natif via flux scrapé)
+
+**Backend** (local actuellement, VPS Hetzner à venir)
+- Node.js + TypeScript + Express
+- Playwright + playwright-extra + stealth plugin
+- TTLCache mémoire (30min)
+
+## Pipeline lecture
+
+```
+1. /watch/[id] -> Ad-gate VibeFlix (clic forcé)
+2. Clic Continuer -> ouvre pub (NEXT_PUBLIC_AD_URL) nouvel onglet
+                  -> en parallèle: GET /api/stream
+3. Backend: Playwright headless visite player aggregateur
+            -> intercepte requête .m3u8 réseau
+            -> cache 30min
+            -> renvoie { m3u8Url, headers }
+4. Frontend reçoit m3u8 -> hls.js charge via /api/manifest (proxy)
+5. Segments .ts: direct depuis CDN (pas proxiés -> VPS bande passante OK)
+6. <video> VibeFlix joue. Zero iframe. Zero pub tierce.
+```
+
+## Providers backend
+
+| Provider | Lang | Status |
+|---|---|---|
+| `frembed` | VF | Hosts: .icu/.li/.cc en cascade, IMDB IDs |
+| `vidlink-vf` | VF | Vidlink avec `?dub=fr` (param ignoré souvent) |
+| `vidlink-vostfr` | VOSTFR | Vidlink avec `?sub=fr` |
+| `vidlink` | MULTI | Confirmé fonctionnel, anglais |
+| `demo` | MULTI | Big Buck Bunny libre, garantie absolue |
+
+Retirés (échouent ou domaines morts):
+- autoembed, embed.su (NXDOMAIN)
+- vidsrc.cc (videasy WASM bot-detect → redirige YouTube)
+- videasy API (réponse chiffrée hex)
+- flixhq via Consumet (522 Cloudflare)
 
 ## Routes
+
 | Route | Description |
-|-------|-------------|
-| `/` | Landing éditoriale (Hero magazine, Features, Showcase, PricingTeaser, Testimonials, FAQ, CTA) |
+|---|---|
+| `/` | Landing (Hero rotatif 5 titres, tendances, catalogue) |
 | `/login`, `/signup` | Auth mockée |
-| `/profiles` | Sélection de profil avec gradients colorés |
-| `/browse` | Hero cinéma + carrousels par humeur et par genre |
-| `/live` | Diffusions en direct |
-| `/watch/[id]` | Lecteur MP4 réel + simulation de pub + détails |
-| `/pricing` | Toggle mensuel/annuel, comparatif Free vs Premium |
+| `/profiles` | Sélection profil |
+| `/browse` | Catalogue par humeurs + live |
+| `/live` | Diffusions live |
+| `/watch/[id]` | Lecteur avec ad-gate + tabs lang + S/E selector + audio track switcher |
+| `/pricing` | Free vs Premium (1€/mois ou 5€/an) |
 | `/my-list` | Watchlist |
 
-## Données
-- Films/séries **réels** (TMDB) : Dune Part Two, Stranger Things, The Last of Us, Mercredi, Oppenheimer, Interstellar, House of the Dragon, Breaking Bad, The Bear, Everything Everywhere, Succession, The Batman, Spider-Verse, Barbie, Arcane, Anatomie d'une chute.
-- Posters & backdrops servis via `image.tmdb.org`.
-- Vidéo échantillon : Big Buck Bunny (Google CDN).
+## Données mockées
+16 titres TMDB réels avec posters/backdrops `image.tmdb.org` + IMDB IDs:
+Dune Part Two, Stranger Things, The Last of Us, Mercredi, Oppenheimer, Interstellar, House of the Dragon, Breaking Bad, The Bear, Everything Everywhere, Succession, The Batman, Spider-Verse, Barbie, Arcane, Anatomie d'une chute.
+2 lives mockés (sport + jazz).
 
-## À faire
-- [ ] Brancher la source vidéo réelle sur `components/VideoPlayer.tsx` (remplacer `SAMPLE_VIDEO_URL`).
-- [ ] Auth réelle (NextAuth / Clerk / Supabase).
-- [ ] Backend pour persister profils, watchlist et progression.
-- [ ] Paiement Stripe (1 €/mois et 5 €/an).
-- [ ] Recherche globale (cmd+K) avec filtres genres/humeurs.
-- [ ] Recommandations personnalisées par profil.
-- [ ] CMS éditorial pour la curation par humeurs.
-- [ ] Tests E2E (Playwright) sur les parcours clés.
-- [ ] Sitemap dynamique + OG images générées par titre.
+## Variables d'env
 
-## Conventions
-- Composants en PascalCase dans `components/`.
-- Données mockées dans `lib/mock-data.ts`.
-- État global dans `lib/store.ts`.
-- Classes utilitaires custom dans `globals.css` (`btn-primary`, `chip`, `glass`, `h-display`).
-- Pas de commentaires superflus.
-- Toute UI textuelle en français.
+| Var | Default | Description |
+|---|---|---|
+| `NEXT_PUBLIC_BACKEND_URL` | `http://localhost:3001` | URL du backend |
+| `NEXT_PUBLIC_AD_URL` | placeholder | URL pub pre-roll (Adsterra/PopAds) |
+| `PORT` (backend) | `3001` | Port Express |
+| `ALLOWED_ORIGIN` (backend) | `*` | CORS |
+| `HEADFUL` (backend) | `0` | `1` = Chromium visible (debug) |
+
+## Sélecteur audio dans le lecteur
+
+hls.js détecte les `audioTracks` du manifest. Si plusieurs pistes:
+- Auto-select FR si `preferredLang === "VF"` et piste FR détectée
+- Sinon expose dropdown `<select>` dans le lecteur
+
+Si une seule piste (cas vidlink anglais classique), pas de selector affiché.
+
+## Limitations actuelles connues
+
+1. **VF réel limité** : vidlink ignore `?dub=fr`. Frembed peut être down. Pour VF garanti il faut soit l'aggregateur du pote (Kweflix-style → URLs à intégrer), soit une lib opensource (consumet/CloudStream) avec extractor FR maintenu.
+
+2. **Anti-bot videasy/WASM** : stealth ne suffit pas pour vidsrc.cc. Décrypter le blob videasy = trop fragile (change toutes les semaines).
+
+3. **DNS bloqués chez certains FAI FR** : embed.su, autoembed.cc renvoient NXDOMAIN. User doit installer Cloudflare WARP ou DNS 1.1.1.1 manuel.
+
+4. **Backend local uniquement** : pas encore déployé sur VPS. Tout marche en localhost.
+
+5. **Pub placeholder** : `NEXT_PUBLIC_AD_URL` pointe sur example.com. À brancher sur réseau pub réel (Adsterra recommandé, ils acceptent les sites de streaming).
+
+## Roadmap
+
+- [ ] Déploiement VPS Hetzner CX21 + Caddy + HTTPS
+- [ ] Branchement vrai réseau pub (Adsterra Direct Link)
+- [ ] URLs Kweflix/Playmogo (besoin des URLs du pote du user)
+- [ ] Persistence cache: SQLite ou Redis (au lieu de mémoire)
+- [ ] Sauvegarde progression (continue à regarder) avec backend sessions
+- [ ] Watchlist côté serveur (actuellement localStorage seulement)
+- [ ] Auth réelle (NextAuth + Supabase)
+- [ ] Stripe pour Premium 1€/mois
+- [ ] Vraie recherche globale (cmd+K) avec filtres

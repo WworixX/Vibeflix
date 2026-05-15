@@ -145,6 +145,7 @@ function BackendPlayer({
         <HlsVideo
           stream={stream}
           poster={title.backdrop}
+          preferredLang={lang}
           onFullscreen={onFullscreen}
         />
       )}
@@ -197,22 +198,28 @@ function BackendPlayer({
 function HlsVideo({
   stream,
   poster,
+  preferredLang,
   onFullscreen,
 }: {
   stream: StreamInfo;
   poster: string;
+  preferredLang: Lang;
   onFullscreen: () => void;
 }) {
   const videoRef = useRef<HTMLVideoElement>(null);
+  const hlsRef = useRef<any>(null);
   const [playing, setPlaying] = useState(false);
   const [muted, setMuted] = useState(false);
   const [progress, setProgress] = useState(0);
   const [duration, setDuration] = useState(0);
   const [buffering, setBuffering] = useState(true);
+  const [audioTracks, setAudioTracks] = useState<
+    Array<{ id: number; lang: string; name: string }>
+  >([]);
+  const [currentAudio, setCurrentAudio] = useState<number>(0);
 
   // Attache hls.js
   useEffect(() => {
-    let hls: any = null;
     let cancelled = false;
     const video = videoRef.current;
     if (!video) return;
@@ -220,29 +227,63 @@ function HlsVideo({
     const manifestUrl = buildManifestUrl(stream);
 
     (async () => {
-      // Safari natif
       if (video.canPlayType("application/vnd.apple.mpegurl")) {
         video.src = manifestUrl;
       } else {
         const Hls = (await import("hls.js")).default;
         if (cancelled || !Hls.isSupported()) return;
-        hls = new Hls({ enableWorker: true, lowLatencyMode: false });
+        const hls = new Hls({ enableWorker: true, lowLatencyMode: false });
+        hlsRef.current = hls;
         hls.loadSource(manifestUrl);
         hls.attachMedia(video);
+        hls.on(Hls.Events.MANIFEST_PARSED, () => {
+          const tracks = (hls.audioTracks ?? []).map((t: any) => ({
+            id: t.id,
+            lang: t.lang || "",
+            name: t.name || t.lang || `Piste ${t.id}`,
+          }));
+          setAudioTracks(tracks);
+          // Auto-select FR si lang=VF et FR dispo
+          if (preferredLang === "VF") {
+            const fr = tracks.findIndex(
+              (t) =>
+                t.lang.toLowerCase().startsWith("fr") ||
+                t.name.toLowerCase().includes("french") ||
+                t.name.toLowerCase().includes("français")
+            );
+            if (fr >= 0) {
+              hls.audioTrack = fr;
+              setCurrentAudio(fr);
+            }
+          }
+        });
+        hls.on(Hls.Events.AUDIO_TRACK_SWITCHED, (_e: any, d: any) => {
+          setCurrentAudio(d.id);
+        });
       }
       video.play().then(() => setPlaying(true)).catch(() => {});
     })();
 
     return () => {
       cancelled = true;
-      if (hls) hls.destroy();
+      if (hlsRef.current) {
+        hlsRef.current.destroy();
+        hlsRef.current = null;
+      }
       if (video) {
         video.pause();
         video.removeAttribute("src");
         video.load();
       }
     };
-  }, [stream]);
+  }, [stream, preferredLang]);
+
+  const switchAudio = (idx: number) => {
+    if (hlsRef.current) {
+      hlsRef.current.audioTrack = idx;
+      setCurrentAudio(idx);
+    }
+  };
 
   const onTime = () => {
     const v = videoRef.current;
@@ -353,7 +394,24 @@ function HlsVideo({
           <span className="text-xs text-white/70 tabular-nums">
             {fmt((progress / 100) * duration)} / {fmt(duration)}
           </span>
-          <span className="ml-auto text-[10px] uppercase tracking-[0.16em] text-mint-300">
+          {audioTracks.length > 1 && (
+            <select
+              value={currentAudio}
+              onChange={(e) => switchAudio(Number(e.target.value))}
+              className="ml-auto rounded-full border border-white/10 bg-white/[0.06] px-3 py-1.5 text-[11px] text-white/85 outline-none"
+              title="Piste audio"
+            >
+              {audioTracks.map((t) => (
+                <option key={t.id} value={t.id} className="bg-char-900">
+                  {(t.lang || t.name).toUpperCase()}
+                </option>
+              ))}
+            </select>
+          )}
+          <span className={cn(
+            "text-[10px] uppercase tracking-[0.16em] text-mint-300",
+            audioTracks.length > 1 ? "" : "ml-auto"
+          )}>
             {stream.providerName} · Sans pub
           </span>
         </div>
