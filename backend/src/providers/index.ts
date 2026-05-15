@@ -1,14 +1,16 @@
 import type { StreamProvider } from "./types.js";
-import { flixhqProvider } from "./flixhq.js";
+import { videasyProvider } from "./videasy.js";
 import { vidsrcCcProvider } from "./vidsrc-cc.js";
 import { demoProvider } from "./demo.js";
 
-// Ordre = priorite. Premier qui renvoie un m3u8 gagne.
-// flixhq en premier (rapide, pas de Puppeteer).
-// vidsrc.cc en fallback (lent + bot-detection mais large catalogue).
-// demo en dernier garantie absolue (BBB libre).
+// Ordre = priorite.
+// videasy: HTTP direct, rapide.
+// vidsrc-cc: Playwright, lent + bot-detection.
+// demo: garantie absolue (BBB libre).
+//
+// FlixHQ retire: 522 Cloudflare, domaine HS.
 export const PROVIDERS: StreamProvider[] = [
-  flixhqProvider,
+  videasyProvider,
   vidsrcCcProvider,
   demoProvider,
 ];
