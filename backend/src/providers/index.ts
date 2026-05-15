@@ -1,15 +1,18 @@
 import type { StreamProvider } from "./types.js";
+import { autoembedProvider } from "./autoembed.js";
 import { embedSuProvider } from "./embed-su.js";
 import { vidsrcCcProvider } from "./vidsrc-cc.js";
 import { videasyProvider } from "./videasy.js";
 import { demoProvider } from "./demo.js";
 
 // Ordre = priorite.
-// embed-su: Playwright + stealth, infra simple, player non-WASM.
-// vidsrc-cc: Playwright + stealth, fallback.
-// videasy: API directe (chiffree, peu utile mais on garde).
+// autoembed: simple, peu de protections, candidat #1.
+// embed-su: infra separee.
+// vidsrc-cc: ralenti par videasy + bot detection.
+// videasy: API chiffree (peu utile).
 // demo: garantie BBB.
 export const PROVIDERS: StreamProvider[] = [
+  autoembedProvider,
   embedSuProvider,
   vidsrcCcProvider,
   videasyProvider,
