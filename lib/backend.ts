@@ -14,6 +14,7 @@ export type Lang = "VF" | "VOSTFR" | "MULTI";
 
 export type StreamRequest = {
   tmdbId: number;
+  imdbId?: string;
   type: "film" | "serie";
   season?: number;
   episode?: number;
@@ -35,6 +36,7 @@ export async function fetchStream(
   if (req.title) params.set("title", req.title);
   if (req.year) params.set("year", String(req.year));
   if (req.lang) params.set("lang", req.lang);
+  if (req.imdbId) params.set("imdbId", req.imdbId);
 
   const res = await fetch(`${BACKEND_URL}/api/stream?${params.toString()}`, {
     signal,

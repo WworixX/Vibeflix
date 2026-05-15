@@ -15,6 +15,7 @@ export type Title = {
   continueAt?: number;
   mood: "Calme" | "Tension" | "Cérébral" | "Lumineux" | "Sombre" | "Romance";
   tmdbId?: number;
+  imdbId?: string;
   defaultSeason?: number;
   defaultEpisode?: number;
 };
@@ -39,6 +40,7 @@ export const titles: Title[] = [
     trending: true,
     mood: "Tension",
     tmdbId: 693134,
+    imdbId: "tt15239678",
   },
   {
     id: "stranger-things",
@@ -56,6 +58,7 @@ export const titles: Title[] = [
     continueAt: 38,
     mood: "Sombre",
     tmdbId: 66732,
+    imdbId: "tt4574334",
     defaultSeason: 1,
     defaultEpisode: 1,
   },
@@ -74,6 +77,7 @@ export const titles: Title[] = [
     trending: true,
     mood: "Sombre",
     tmdbId: 100088,
+    imdbId: "tt3581920",
     defaultSeason: 1,
     defaultEpisode: 1,
   },
@@ -91,6 +95,7 @@ export const titles: Title[] = [
     backdrop: backdrop("/iHSwvRVsRyxpX7FE7GbviaDvgGZ.jpg"),
     mood: "Cérébral",
     tmdbId: 119051,
+    imdbId: "tt13443470",
     defaultSeason: 1,
     defaultEpisode: 1,
   },
@@ -109,6 +114,7 @@ export const titles: Title[] = [
     trending: true,
     mood: "Cérébral",
     tmdbId: 872585,
+    imdbId: "tt15398776",
   },
   {
     id: "interstellar",
@@ -125,6 +131,7 @@ export const titles: Title[] = [
     continueAt: 64,
     mood: "Cérébral",
     tmdbId: 157336,
+    imdbId: "tt0816692",
   },
   {
     id: "house-of-the-dragon",
@@ -140,6 +147,7 @@ export const titles: Title[] = [
     backdrop: backdrop("/etj8E2o4Bxx7LbBxAzbeKSF8Bdx.jpg"),
     mood: "Sombre",
     tmdbId: 94997,
+    imdbId: "tt11198330",
     defaultSeason: 1,
     defaultEpisode: 1,
   },
@@ -157,6 +165,7 @@ export const titles: Title[] = [
     backdrop: backdrop("/tsRy63Mu5cu022Q9x4cMnLQXSAI.jpg"),
     mood: "Sombre",
     tmdbId: 1396,
+    imdbId: "tt0903747",
     defaultSeason: 1,
     defaultEpisode: 1,
   },
@@ -175,6 +184,7 @@ export const titles: Title[] = [
     trending: true,
     mood: "Tension",
     tmdbId: 136315,
+    imdbId: "tt14452776",
     defaultSeason: 1,
     defaultEpisode: 1,
   },
@@ -192,6 +202,7 @@ export const titles: Title[] = [
     backdrop: backdrop("/nGxUxi3PfXDRm7Vg95VBNgNM8yc.jpg"),
     mood: "Lumineux",
     tmdbId: 545611,
+    imdbId: "tt6710474",
   },
   {
     id: "succession",
@@ -207,6 +218,7 @@ export const titles: Title[] = [
     backdrop: backdrop("/7HW47XbkNQ5fiwQFYGWdw9gs144.jpg"),
     mood: "Cérébral",
     tmdbId: 76331,
+    imdbId: "tt7660850",
     defaultSeason: 1,
     defaultEpisode: 1,
   },
@@ -224,6 +236,7 @@ export const titles: Title[] = [
     backdrop: backdrop("/b0PlSFdDwbyK0cf5RxwDpaOJQvQ.jpg"),
     mood: "Sombre",
     tmdbId: 414906,
+    imdbId: "tt1877830",
   },
   {
     id: "spider-verse",
@@ -240,6 +253,7 @@ export const titles: Title[] = [
     trending: true,
     mood: "Lumineux",
     tmdbId: 569094,
+    imdbId: "tt9362722",
   },
   {
     id: "barbie",
@@ -255,6 +269,7 @@ export const titles: Title[] = [
     backdrop: backdrop("/nHf61UzkfFno5X1ofIhugCPus2R.jpg"),
     mood: "Lumineux",
     tmdbId: 346698,
+    imdbId: "tt1517268",
   },
   {
     id: "arcane",
@@ -270,6 +285,7 @@ export const titles: Title[] = [
     backdrop: backdrop("/8Z8dptJEypuLoOQro1WugD855YE.jpg"),
     mood: "Tension",
     tmdbId: 94605,
+    imdbId: "tt11126994",
     defaultSeason: 1,
     defaultEpisode: 1,
   },
@@ -287,6 +303,7 @@ export const titles: Title[] = [
     backdrop: backdrop("/3agtMkw7CryBPmaybBgWGRtoENk.jpg"),
     mood: "Cérébral",
     tmdbId: 915935,
+    imdbId: "tt17009710",
   },
 ];
 

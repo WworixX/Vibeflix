@@ -22,6 +22,7 @@ app.get("/health", (_req, res) => {
 
 app.get("/api/stream", async (req: Request, res: Response) => {
   const tmdbId = Number(req.query.tmdbId);
+  const imdbId = req.query.imdbId as string | undefined;
   const type = req.query.type as "film" | "serie" | undefined;
   const season = req.query.season ? Number(req.query.season) : undefined;
   const episode = req.query.episode ? Number(req.query.episode) : undefined;
@@ -40,7 +41,7 @@ app.get("/api/stream", async (req: Request, res: Response) => {
     return res.json({ ...cached, cached: true });
   }
 
-  const streamReq: StreamRequest = { tmdbId, type, season, episode, title, year };
+  const streamReq: StreamRequest = { tmdbId, imdbId, type, season, episode, title, year };
 
   // Provider explicite OU filtre par lang OU tous
   const candidates = providerId

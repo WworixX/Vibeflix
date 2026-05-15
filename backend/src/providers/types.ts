@@ -1,5 +1,6 @@
 export type StreamRequest = {
   tmdbId: number;
+  imdbId?: string;
   type: "film" | "serie";
   season?: number;
   episode?: number;

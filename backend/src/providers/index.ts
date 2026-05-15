@@ -1,4 +1,5 @@
 import type { StreamProvider } from "./types.js";
+import { frembedProvider } from "./frembed.js";
 import {
   vidlinkProvider,
   vidlinkVfProvider,
@@ -6,9 +7,13 @@ import {
 } from "./vidlink.js";
 import { demoProvider } from "./demo.js";
 
-// Variantes vidlink par langue + demo fallback.
-// Le client envoie lang -> backend filtre PROVIDERS.
+// Ordre = priorite.
+// frembed: VF reel (aggregateur francais), prioritaire si imdbId dispo.
+// vidlink-vf/vostfr: fallback (ignore probablement le param dub).
+// vidlink (MULTI): defaut anglais.
+// demo: garantie BBB.
 export const PROVIDERS: StreamProvider[] = [
+  frembedProvider,
   vidlinkVfProvider,
   vidlinkVostfrProvider,
   vidlinkProvider,
@@ -21,7 +26,6 @@ export function getProvider(id: string): StreamProvider | undefined {
 
 export function providersForLang(lang?: string): StreamProvider[] {
   if (!lang) return PROVIDERS;
-  // Si lang specifie, filtre + ajoute MULTI/demo en fallback
   const matching = PROVIDERS.filter((p) => p.lang === lang);
   const fallback = PROVIDERS.filter(
     (p) => p.lang === "MULTI" || p.id === "demo"

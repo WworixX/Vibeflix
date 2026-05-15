@@ -80,6 +80,7 @@ function BackendPlayer({
       const info = await fetchStream(
         {
           tmdbId: title.tmdbId!,
+          imdbId: title.imdbId,
           type: title.kind === "film" ? "film" : "serie",
           season,
           episode,
