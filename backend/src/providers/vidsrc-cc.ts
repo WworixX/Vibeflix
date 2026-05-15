@@ -10,23 +10,41 @@ function buildEmbedUrl(req: StreamRequest): string {
   }`;
 }
 
-const M3U8_PATTERNS = [/\.m3u8(\?|$)/i, /\/manifest/i, /\/master\.txt/i];
-const IGNORE_PATTERNS = [
+const M3U8_URL_PATTERNS = [
+  /\.m3u8(\?|$)/i,
+  /\/manifest/i,
+  /\/master\.txt/i,
+  /\/playlist\.m3u8/i,
+];
+
+const M3U8_CONTENT_TYPES = [
+  "application/vnd.apple.mpegurl",
+  "application/x-mpegurl",
+  "application/dash+xml",
+  "audio/mpegurl",
+];
+
+const IGNORE_URL_PATTERNS = [
   /googlevideo/,
   /doubleclick/,
   /google-analytics/,
   /googletagmanager/,
   /facebook\.com\/tr/,
-  /\.png(\?|$)/i,
-  /\.jpg(\?|$)/i,
-  /\.svg(\?|$)/i,
-  /\.css(\?|$)/i,
-  /\.woff/i,
+  /\.(png|jpg|jpeg|svg|gif|webp|ico)(\?|$)/i,
+  /\.(css|woff2?|ttf)(\?|$)/i,
 ];
 
-function looksLikeM3u8(url: string): boolean {
-  if (IGNORE_PATTERNS.some((p) => p.test(url))) return false;
-  return M3U8_PATTERNS.some((p) => p.test(url));
+function shouldIgnoreUrl(url: string): boolean {
+  return IGNORE_URL_PATTERNS.some((p) => p.test(url));
+}
+
+function urlLooksLikeM3u8(url: string): boolean {
+  if (shouldIgnoreUrl(url)) return false;
+  return M3U8_URL_PATTERNS.some((p) => p.test(url));
+}
+
+function contentTypeIsManifest(ct: string): boolean {
+  return M3U8_CONTENT_TYPES.some((m) => ct.toLowerCase().includes(m));
 }
 
 export const vidsrcCcProvider: StreamProvider = {
@@ -42,17 +60,27 @@ export const vidsrcCcProvider: StreamProvider = {
     let m3u8: { url: string; headers: Record<string, string> } | null = null;
     const seen: string[] = [];
 
-    // IMPORTANT: on ecoute au niveau du CONTEXTE pour capter les
-    // requetes faites depuis les iframes imbriques (vidsrc.cc charge
-    // le vrai player dans un sous-iframe).
+    // Detection 1: par URL pattern
     ctx.on("request", (r) => {
       const url = r.url();
       seen.push(url);
-      if (!m3u8 && looksLikeM3u8(url)) {
-        console.log(`[vidsrc-cc] ✓ m3u8 found: ${url.slice(0, 120)}`);
+      if (!m3u8 && urlLooksLikeM3u8(url)) {
+        console.log(`[vidsrc-cc] ✓ via URL: ${url.slice(0, 140)}`);
+        m3u8 = { url, headers: r.headers() as Record<string, string> };
+      }
+    });
+
+    // Detection 2: par Content-Type de la reponse (plus fiable)
+    ctx.on("response", async (resp) => {
+      if (m3u8) return;
+      const url = resp.url();
+      if (shouldIgnoreUrl(url)) return;
+      const ct = resp.headers()["content-type"] ?? "";
+      if (contentTypeIsManifest(ct)) {
+        console.log(`[vidsrc-cc] ✓ via Content-Type "${ct}": ${url.slice(0, 140)}`);
         m3u8 = {
           url,
-          headers: r.headers() as Record<string, string>,
+          headers: resp.request().headers() as Record<string, string>,
         };
       }
     });
@@ -64,15 +92,14 @@ export const vidsrcCcProvider: StreamProvider = {
         referer: "https://vidsrc.cc/",
       });
 
-      // Donne le temps au DOM de se construire et au JS de demarrer
       await page.waitForTimeout(2000);
 
-      // Strategie 1: clique au centre du player pour declencher l'autoplay
+      // Click central pour declencher autoplay
       try {
         await page.mouse.click(640, 360);
       } catch {}
 
-      // Strategie 2: cherche tout bouton "play" dans la page principale ET tous les iframes
+      // Click sur boutons play dans tous les frames
       const tryClickPlay = async () => {
         for (const frame of page.frames()) {
           for (const sel of [
@@ -96,21 +123,22 @@ export const vidsrcCcProvider: StreamProvider = {
       };
       await tryClickPlay();
 
-      // Attente m3u8: 25s max
+      // 35s d'attente, re-click toutes les 5s
       const start = Date.now();
-      while (!m3u8 && Date.now() - start < 25000) {
+      let lastClick = start;
+      while (!m3u8 && Date.now() - start < 35000) {
         await page.waitForTimeout(300);
-        // re-clique periodiquement au cas ou
-        if ((Date.now() - start) % 5000 < 350) {
+        if (Date.now() - lastClick > 5000) {
           await tryClickPlay().catch(() => {});
+          lastClick = Date.now();
         }
       }
 
       if (!m3u8) {
         console.log(
-          `[vidsrc-cc] ✗ no m3u8 found after 25s. ${seen.length} requests observed. Last 15:`
+          `[vidsrc-cc] ✗ no manifest found after 35s. ${seen.length} requests:`
         );
-        seen.slice(-15).forEach((u) => console.log(`    ${u.slice(0, 140)}`));
+        seen.forEach((u, i) => console.log(`  [${i + 1}] ${u.slice(0, 160)}`));
       }
     } catch (err) {
       console.error("[vidsrc-cc] navigation error", err);
