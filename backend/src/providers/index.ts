@@ -1,17 +1,18 @@
 import type { StreamProvider } from "./types.js";
-import { videasyProvider } from "./videasy.js";
+import { embedSuProvider } from "./embed-su.js";
 import { vidsrcCcProvider } from "./vidsrc-cc.js";
+import { videasyProvider } from "./videasy.js";
 import { demoProvider } from "./demo.js";
 
 // Ordre = priorite.
-// videasy: HTTP direct, rapide.
-// vidsrc-cc: Playwright, lent + bot-detection.
-// demo: garantie absolue (BBB libre).
-//
-// FlixHQ retire: 522 Cloudflare, domaine HS.
+// embed-su: Playwright + stealth, infra simple, player non-WASM.
+// vidsrc-cc: Playwright + stealth, fallback.
+// videasy: API directe (chiffree, peu utile mais on garde).
+// demo: garantie BBB.
 export const PROVIDERS: StreamProvider[] = [
-  videasyProvider,
+  embedSuProvider,
   vidsrcCcProvider,
+  videasyProvider,
   demoProvider,
 ];
 

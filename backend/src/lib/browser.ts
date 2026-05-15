@@ -1,4 +1,10 @@
-import { chromium, type Browser, type BrowserContext } from "playwright";
+import { chromium as chromiumExtra } from "playwright-extra";
+import StealthPlugin from "puppeteer-extra-plugin-stealth";
+import type { Browser, BrowserContext } from "playwright";
+
+// Stealth plugin: cache navigator.webdriver, fake plugins/languages,
+// patch User-Agent, etc. Bypass la plupart des bot detections basiques.
+chromiumExtra.use(StealthPlugin() as any);
 
 let browser: Browser | null = null;
 
@@ -6,8 +12,10 @@ const HEADFUL = process.env.HEADFUL === "1";
 
 export async function getBrowser(): Promise<Browser> {
   if (browser && browser.isConnected()) return browser;
-  console.log(`[browser] launching Chromium (${HEADFUL ? "HEADFUL" : "headless"})`);
-  browser = await chromium.launch({
+  console.log(
+    `[browser] launching Chromium (${HEADFUL ? "HEADFUL" : "headless"}) + stealth`
+  );
+  browser = (await chromiumExtra.launch({
     headless: !HEADFUL,
     args: [
       "--no-sandbox",
@@ -16,7 +24,7 @@ export async function getBrowser(): Promise<Browser> {
       "--disable-web-security",
       "--autoplay-policy=no-user-gesture-required",
     ],
-  });
+  })) as Browser;
   return browser;
 }
 
