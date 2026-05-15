@@ -10,6 +10,8 @@ export type StreamInfo = {
   cached?: boolean;
 };
 
+export type Lang = "VF" | "VOSTFR" | "MULTI";
+
 export type StreamRequest = {
   tmdbId: number;
   type: "film" | "serie";
@@ -17,6 +19,7 @@ export type StreamRequest = {
   episode?: number;
   title?: string;
   year?: number;
+  lang?: Lang;
 };
 
 export async function fetchStream(
@@ -31,6 +34,7 @@ export async function fetchStream(
   if (req.episode) params.set("episode", String(req.episode));
   if (req.title) params.set("title", req.title);
   if (req.year) params.set("year", String(req.year));
+  if (req.lang) params.set("lang", req.lang);
 
   const res = await fetch(`${BACKEND_URL}/api/stream?${params.toString()}`, {
     signal,

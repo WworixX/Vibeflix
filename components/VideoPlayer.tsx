@@ -8,7 +8,8 @@ import {
 } from "lucide-react";
 import type { Title } from "@/lib/mock-data";
 import { SAMPLE_VIDEO_URL } from "@/lib/mock-data";
-import { fetchStream, buildManifestUrl, type StreamInfo } from "@/lib/backend";
+import { fetchStream, buildManifestUrl, type StreamInfo, type Lang } from "@/lib/backend";
+import { cn } from "@/lib/utils";
 
 const AD_URL =
   process.env.NEXT_PUBLIC_AD_URL ||
@@ -58,6 +59,7 @@ function BackendPlayer({
 }) {
   const [season, setSeason] = useState<number>(title.defaultSeason ?? 1);
   const [episode, setEpisode] = useState<number>(title.defaultEpisode ?? 1);
+  const [lang, setLang] = useState<Lang>("VF");
   const [adClaimed, setAdClaimed] = useState(false);
   const [stream, setStream] = useState<StreamInfo | null>(null);
   const [status, setStatus] = useState<
@@ -83,6 +85,7 @@ function BackendPlayer({
           episode,
           title: title.title,
           year: title.year,
+          lang,
         },
         ac.signal
       );
@@ -97,12 +100,12 @@ function BackendPlayer({
     }
   };
 
-  // Re-extraction si saison/épisode change (uniquement si ad déjà passé)
+  // Re-extraction si saison/épisode/langue change (uniquement si ad déjà passé)
   useEffect(() => {
     if (!adClaimed) return;
     startExtraction();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [season, episode, adClaimed]);
+  }, [season, episode, adClaimed, lang]);
 
   const startAd = () => {
     const w = window.open(AD_URL, "_blank", "noopener,noreferrer");
@@ -145,20 +148,40 @@ function BackendPlayer({
         />
       )}
 
-      {adClaimed && isSerie && (status === "ready" || status === "extracting") && (
+      {adClaimed && (status === "ready" || status === "extracting") && (
         <div className="absolute bottom-4 left-1/2 z-30 -translate-x-1/2">
-          <div className="flex items-center gap-2 rounded-full border border-white/10 bg-black/65 px-3 py-1.5 backdrop-blur-md">
-            <SECounter
-              label="S"
-              value={season}
-              onChange={(v) => setSeason(Math.max(1, v))}
-            />
-            <span className="h-3 w-px bg-white/15" />
-            <SECounter
-              label="E"
-              value={episode}
-              onChange={(v) => setEpisode(Math.max(1, v))}
-            />
+          <div className="flex flex-col gap-2 rounded-3xl border border-white/10 bg-black/70 p-2 backdrop-blur-md">
+            <div className="flex items-center gap-1">
+              {(["VF", "VOSTFR", "MULTI"] as Lang[]).map((l) => (
+                <button
+                  key={l}
+                  onClick={() => setLang(l)}
+                  className={cn(
+                    "rounded-full px-3 py-1 text-[10px] font-semibold uppercase tracking-[0.16em] transition",
+                    l === lang
+                      ? "bg-mint-gradient text-char-950"
+                      : "text-white/55 hover:bg-white/[0.06] hover:text-white"
+                  )}
+                >
+                  {l}
+                </button>
+              ))}
+            </div>
+            {isSerie && (
+              <div className="flex items-center justify-center gap-2 rounded-2xl bg-white/[0.03] py-1">
+                <SECounter
+                  label="S"
+                  value={season}
+                  onChange={(v) => setSeason(Math.max(1, v))}
+                />
+                <span className="h-3 w-px bg-white/15" />
+                <SECounter
+                  label="E"
+                  value={episode}
+                  onChange={(v) => setEpisode(Math.max(1, v))}
+                />
+              </div>
+            )}
           </div>
         </div>
       )}

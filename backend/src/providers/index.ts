@@ -1,26 +1,30 @@
 import type { StreamProvider } from "./types.js";
-import { vidlinkProvider } from "./vidlink.js";
-import { autoembedProvider } from "./autoembed.js";
-import { embedSuProvider } from "./embed-su.js";
-import { vidsrcCcProvider } from "./vidsrc-cc.js";
-import { videasyProvider } from "./videasy.js";
+import {
+  vidlinkProvider,
+  vidlinkVfProvider,
+  vidlinkVostfrProvider,
+} from "./vidlink.js";
 import { demoProvider } from "./demo.js";
 
-// Ordre = priorite.
-// vidlink: confirme accessible chez user en iframe, candidat #1.
-// autoembed/embed-su: NXDOMAIN actuel chez user.
-// vidsrc-cc: bot detection videasy redirige vers YouTube.
-// videasy API: chiffree.
-// demo: garantie BBB.
+// Variantes vidlink par langue + demo fallback.
+// Le client envoie lang -> backend filtre PROVIDERS.
 export const PROVIDERS: StreamProvider[] = [
+  vidlinkVfProvider,
+  vidlinkVostfrProvider,
   vidlinkProvider,
-  autoembedProvider,
-  embedSuProvider,
-  vidsrcCcProvider,
-  videasyProvider,
   demoProvider,
 ];
 
 export function getProvider(id: string): StreamProvider | undefined {
   return PROVIDERS.find((p) => p.id === id);
+}
+
+export function providersForLang(lang?: string): StreamProvider[] {
+  if (!lang) return PROVIDERS;
+  // Si lang specifie, filtre + ajoute MULTI/demo en fallback
+  const matching = PROVIDERS.filter((p) => p.lang === lang);
+  const fallback = PROVIDERS.filter(
+    (p) => p.lang === "MULTI" || p.id === "demo"
+  );
+  return [...matching, ...fallback];
 }
