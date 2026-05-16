@@ -61,6 +61,14 @@ function BackendPlayer({
   const [episode, setEpisode] = useState<number>(title.defaultEpisode ?? 1);
   const [lang, setLang] = useState<Lang>("VF");
   const [adClaimed, setAdClaimed] = useState(false);
+
+  // Dev bypass: ?skipAd=1 skips ad-gate entirely (eviter hydration mismatch
+  // en faisant ca apres mount, pas dans le useState initializer).
+  useEffect(() => {
+    if (new URLSearchParams(window.location.search).has("skipAd")) {
+      setAdClaimed(true);
+    }
+  }, []);
   const [stream, setStream] = useState<StreamInfo | null>(null);
   const [status, setStatus] = useState<
     "idle" | "extracting" | "ready" | "error"

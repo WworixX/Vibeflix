@@ -1,5 +1,4 @@
 import type { StreamProvider } from "./types.js";
-import { frembedProvider } from "./frembed.js";
 import {
   vidlinkProvider,
   vidlinkVfProvider,
@@ -8,12 +7,15 @@ import {
 import { demoProvider } from "./demo.js";
 
 // Ordre = priorite.
-// frembed: VF reel (aggregateur francais), prioritaire si imdbId dispo.
-// vidlink-vf/vostfr: fallback (ignore probablement le param dub).
-// vidlink (MULTI): defaut anglais.
-// demo: garantie BBB.
+// vidlink: source principale fiable.
+// demo: garantie BBB en dernier.
+//
+// Retires:
+//   - autoembed, embed-su (NXDOMAIN)
+//   - vidsrc-cc (videasy WASM bot detect + redirige YouTube)
+//   - videasy (API chiffree)
+//   - frembed (3 hosts tous morts/timeout 60s gaspilles)
 export const PROVIDERS: StreamProvider[] = [
-  frembedProvider,
   vidlinkVfProvider,
   vidlinkVostfrProvider,
   vidlinkProvider,
