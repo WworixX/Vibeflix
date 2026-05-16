@@ -1,26 +1,9 @@
 import type { StreamProvider } from "./types.js";
-import {
-  vidlinkProvider,
-  vidlinkVfProvider,
-  vidlinkVostfrProvider,
-} from "./vidlink.js";
+import { ALL_PROVIDERS } from "./all.js";
 import { demoProvider } from "./demo.js";
 
-// Ordre = priorite.
-// vidlink: source principale fiable.
-// demo: garantie BBB en dernier.
-//
-// Retires:
-//   - autoembed, embed-su (NXDOMAIN)
-//   - vidsrc-cc (videasy WASM bot detect + redirige YouTube)
-//   - videasy (API chiffree)
-//   - frembed (3 hosts tous morts/timeout 60s gaspilles)
-export const PROVIDERS: StreamProvider[] = [
-  vidlinkVfProvider,
-  vidlinkVostfrProvider,
-  vidlinkProvider,
-  demoProvider,
-];
+// Tous les providers iframes (par langue) + demo fallback BBB
+export const PROVIDERS: StreamProvider[] = [...ALL_PROVIDERS, demoProvider];
 
 export function getProvider(id: string): StreamProvider | undefined {
   return PROVIDERS.find((p) => p.id === id);
@@ -29,8 +12,15 @@ export function getProvider(id: string): StreamProvider | undefined {
 export function providersForLang(lang?: string): StreamProvider[] {
   if (!lang) return PROVIDERS;
   const matching = PROVIDERS.filter((p) => p.lang === lang);
-  const fallback = PROVIDERS.filter(
-    (p) => p.lang === "MULTI" || p.id === "demo"
-  );
-  return [...matching, ...fallback];
+  return [...matching, demoProvider];
+}
+
+// Liste publique pour /api/providers
+export function listProviders() {
+  return PROVIDERS.filter((p) => p.id !== "demo").map((p) => ({
+    id: p.id,
+    name: p.name,
+    lang: p.lang,
+    hd: (p as any).hd ?? false,
+  }));
 }

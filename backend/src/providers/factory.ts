@@ -1,27 +1,6 @@
 import { newContext } from "../lib/browser.js";
 import type { StreamProvider, StreamRequest, StreamResult } from "./types.js";
 
-type Variant = "MULTI" | "VF" | "VOSTFR";
-
-function buildEmbedUrl(req: StreamRequest, variant: Variant): string {
-  const base =
-    req.type === "film"
-      ? `https://vidlink.pro/movie/${req.tmdbId}`
-      : `https://vidlink.pro/tv/${req.tmdbId}/${req.season ?? 1}/${req.episode ?? 1}`;
-  const params = new URLSearchParams({
-    autoplay: "true",
-    title: "false",
-  });
-  if (variant === "VF") {
-    params.set("dub", "fr");
-    params.set("preferredAudio", "fr");
-  } else if (variant === "VOSTFR") {
-    params.set("sub", "fr");
-    params.set("preferredSub", "fr");
-  }
-  return `${base}?${params.toString()}`;
-}
-
 const M3U8_URL_PATTERNS = [/\.m3u8(\?|$)/i, /\/manifest/i, /\/master\.txt/i];
 const M3U8_CT = [
   "application/vnd.apple.mpegurl",
@@ -41,21 +20,37 @@ const urlIsM3u8 = (u: string) =>
 const ctIsManifest = (ct: string) =>
   M3U8_CT.some((m) => ct.toLowerCase().includes(m));
 
-function makeProvider(
-  id: string,
-  name: string,
-  lang: "MULTI" | "VF" | "VOSTFR"
-): StreamProvider {
+export type IframeProviderDef = {
+  id: string;
+  name: string;
+  lang: "VF" | "VOSTFR" | "VO" | "MULTI";
+  hd?: boolean;
+  refererHost?: string; // pour le Referer header retourne
+  buildUrl: (req: StreamRequest) => string | null;
+  timeoutMs?: number;
+  navTimeoutMs?: number;
+};
+
+export function makeIframeProvider(def: IframeProviderDef): StreamProvider {
+  const timeoutMs = def.timeoutMs ?? 25000;
+  const navTimeoutMs = def.navTimeoutMs ?? 25000;
+  const refererHost = def.refererHost ?? "";
+
   return {
-    id,
-    name,
-    lang,
+    id: def.id,
+    name: def.name,
+    lang: def.lang,
+    hd: def.hd,
     async extract(req): Promise<StreamResult | null> {
-      const embedUrl = buildEmbedUrl(req, lang);
-      console.log(`[${id}] → ${embedUrl}`);
+      const embedUrl = def.buildUrl(req);
+      if (!embedUrl) {
+        console.log(`[${def.id}] URL non constructible (manque imdbId/tmdbId?)`);
+        return null;
+      }
+      console.log(`[${def.id}] → ${embedUrl}`);
+
       const ctx = await newContext();
       const page = await ctx.newPage();
-
       let m3u8: { url: string; headers: Record<string, string> } | null = null;
       const seen: string[] = [];
 
@@ -63,7 +58,7 @@ function makeProvider(
         const u = r.url();
         seen.push(u);
         if (!m3u8 && urlIsM3u8(u)) {
-          console.log(`[${id}] ✓ URL: ${u.slice(0, 140)}`);
+          console.log(`[${def.id}] ✓ URL: ${u.slice(0, 140)}`);
           m3u8 = { url: u, headers: r.headers() as Record<string, string> };
         }
       });
@@ -73,7 +68,7 @@ function makeProvider(
         if (ignored(u)) return;
         const ct = resp.headers()["content-type"] ?? "";
         if (ctIsManifest(ct)) {
-          console.log(`[${id}] ✓ CT "${ct}": ${u.slice(0, 140)}`);
+          console.log(`[${def.id}] ✓ CT "${ct}": ${u.slice(0, 140)}`);
           m3u8 = {
             url: u,
             headers: resp.request().headers() as Record<string, string>,
@@ -84,9 +79,9 @@ function makeProvider(
       try {
         await page.goto(embedUrl, {
           waitUntil: "domcontentloaded",
-          timeout: 30000,
+          timeout: navTimeoutMs,
         });
-        await page.waitForTimeout(2500);
+        await page.waitForTimeout(1500);
 
         const tryPlay = async () => {
           try {
@@ -98,10 +93,14 @@ function makeProvider(
               ".vjs-big-play-button",
               ".plyr__control--overlaid",
               "button.play",
+              ".play-btn",
               "video",
             ]) {
               try {
-                await frame.locator(sel).first().click({ timeout: 1200, force: true });
+                await frame
+                  .locator(sel)
+                  .first()
+                  .click({ timeout: 800, force: true });
               } catch {}
             }
           }
@@ -110,19 +109,20 @@ function makeProvider(
 
         const start = Date.now();
         let lastClick = start;
-        while (!m3u8 && Date.now() - start < 25000) {
+        while (!m3u8 && Date.now() - start < timeoutMs) {
           await page.waitForTimeout(300);
-          if (Date.now() - lastClick > 5000) {
+          if (Date.now() - lastClick > 4000) {
             await tryPlay().catch(() => {});
             lastClick = Date.now();
           }
         }
-
         if (!m3u8) {
-          console.log(`[${id}] ✗ no manifest. ${seen.length} requests.`);
+          console.log(
+            `[${def.id}] ✗ no manifest apres ${timeoutMs}ms. ${seen.length} requests`
+          );
         }
       } catch (err) {
-        console.error(`[${id}] error`, err);
+        console.error(`[${def.id}] error:`, (err as Error).message.slice(0, 200));
       } finally {
         await ctx.close();
       }
@@ -131,21 +131,14 @@ function makeProvider(
       return {
         m3u8Url: m3u8.url,
         headers: {
-          Referer: m3u8.headers["referer"] ?? "https://vidlink.pro/",
+          Referer:
+            m3u8.headers["referer"] ?? (refererHost ? `${refererHost}/` : ""),
           "User-Agent": m3u8.headers["user-agent"] ?? "",
         },
-        providerId: id,
-        providerName: name,
+        providerId: def.id,
+        providerName: def.name,
         expiresAt: Date.now() + 1000 * 60 * 60,
       };
     },
   };
 }
-
-export const vidlinkProvider = makeProvider("vidlink", "Lecteur HD", "MULTI");
-export const vidlinkVfProvider = makeProvider("vidlink-vf", "VF", "VF");
-export const vidlinkVostfrProvider = makeProvider(
-  "vidlink-vostfr",
-  "VOSTFR",
-  "VOSTFR"
-);

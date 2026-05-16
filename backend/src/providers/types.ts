@@ -22,5 +22,6 @@ export interface StreamProvider {
   id: string;
   name: string;
   lang: "VF" | "VOSTFR" | "VO" | "MULTI";
+  hd?: boolean;
   extract(req: StreamRequest): Promise<StreamResult | null>;
 }

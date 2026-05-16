@@ -1,7 +1,7 @@
 import express, { type Request, type Response } from "express";
 import cors from "cors";
 import { TTLCache } from "./lib/cache.js";
-import { PROVIDERS, getProvider, providersForLang } from "./providers/index.js";
+import { PROVIDERS, getProvider, providersForLang, listProviders } from "./providers/index.js";
 import type { StreamResult, StreamRequest } from "./providers/types.js";
 
 const app = express();
